@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Despensa</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+  --bg:      var(--tg-theme-bg-color,#fff);
+  --text:    var(--tg-theme-text-color,#000);
+  --hint:    var(--tg-theme-hint-color,#999);
+  --link:    var(--tg-theme-link-color,#2481cc);
+  --btn:     var(--tg-theme-button-color,#2481cc);
+  --btn-txt: var(--tg-theme-button-text-color,#fff);
+  --sec:     var(--tg-theme-secondary-bg-color,#f1f1f1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh}
+.view{display:none;min-height:100vh;flex-direction:column}
+.view.active{display:flex}
+
+/* Header */
+.hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;
+  background:var(--sec);position:sticky;top:0;z-index:10;
+  border-bottom:1px solid rgba(0,0,0,.07)}
+.hdr h2{font-size:17px;font-weight:600;flex:1}
+.back{background:none;border:none;font-size:28px;line-height:1;
+  cursor:pointer;color:var(--link);padding:0 4px}
+
+/* Menu */
+.menu-top{padding:24px 16px 14px;text-align:center}
+.menu-top .logo{font-size:48px}
+.menu-top h1{font-size:24px;font-weight:700;margin:6px 0 4px}
+.menu-top p{font-size:13px;color:var(--hint)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 20px}
+.mbtn{background:var(--sec);border:none;border-radius:16px;padding:18px 10px;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;
+  font-size:13px;font-weight:500;color:var(--text);transition:transform .1s}
+.mbtn:active{transform:scale(.95)}
+.mbtn .ico{font-size:30px}
+.mbtn.wide{grid-column:1/-1}
+
+/* Content */
+.content{flex:1;padding:14px 16px;overflow-y:auto}
+
+/* Cards */
+.card{background:var(--sec);border-radius:14px;padding:14px;margin-bottom:10px;position:relative}
+.card-name{font-size:16px;font-weight:600}
+.card-marca{font-size:13px;color:var(--hint);margin-top:2px}
+.card-line{font-size:13px;color:var(--hint);margin-top:3px}
+.card-img{width:100%;border-radius:10px;margin-top:10px;max-height:180px;object-fit:cover}
+
+/* Badges */
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;margin-top:5px}
+.bg-green{background:#d4edda;color:#155724}
+.bg-yellow{background:#fff3cd;color:#7d5800}
+.bg-orange{background:#ffe5cc;color:#7d3200}
+.bg-red{background:#f8d7da;color:#721c24}
+.bg-blue{background:#cce5ff;color:#004085}
+.bg-gray{background:#e2e3e5;color:#383d41}
+
+/* Buttons in cards */
+.card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.act-btn{background:var(--btn);color:var(--btn-txt);border:none;border-radius:8px;
+  padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer}
+.act-btn.danger{background:#ff3b30}
+.act-btn.secondary{background:var(--sec);color:var(--text);
+  border:1px solid rgba(0,0,0,.12)}
+.del-abs{position:absolute;top:12px;right:12px;background:#ff3b30;color:#fff;
+  border:none;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer}
+
+/* Compras - checkbox row */
+.compra-row{display:flex;align-items:flex-start;gap:12px;
+  background:var(--sec);border-radius:14px;padding:14px;margin-bottom:8px}
+.compra-row.bought{opacity:.55}
+.chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--hint);
+  flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:14px;margin-top:1px;transition:all .15s}
+.chk.checked{background:var(--btn);border-color:var(--btn);color:#fff}
+.compra-info{flex:1;min-width:0}
+.compra-name{font-size:15px;font-weight:600}
+.compra-sub{font-size:13px;color:var(--hint);margin-top:2px}
+.compra-real{font-size:12px;color:var(--btn);margin-top:3px;font-weight:500}
+.compra-del{background:none;border:none;color:var(--hint);font-size:20px;
+  cursor:pointer;flex-shrink:0;padding:0 4px}
+
+/* Bottom action bar */
+.action-bar{padding:12px 16px;background:var(--sec);
+  border-top:1px solid rgba(0,0,0,.07)}
+
+/* Form */
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:11px;font-weight:600;color:var(--hint);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.fi{width:100%;padding:12px;border-radius:12px;border:none;
+  background:var(--sec);font-size:16px;color:var(--text);outline:none}
+.fi:focus{box-shadow:0 0 0 2px var(--btn)}
+.btn-p{width:100%;padding:14px;background:var(--btn);color:var(--btn-txt);
+  border:none;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;margin-top:6px}
+.btn-p:active{opacity:.85}
+.btn-p.sec{background:var(--sec);color:var(--text);border:1px solid rgba(0,0,0,.12);margin-top:8px}
+
+/* Search */
+.search-wrap{padding:14px 16px 0}
+
+/* Empty / loading */
+.empty{text-align:center;padding:60px 20px;color:var(--hint)}
+.empty .ico{font-size:46px;margin-bottom:10px}
+
+/* Section title */
+.stitle{font-size:12px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--hint);margin:10px 0 6px}
+
+/* Modal overlay */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:100;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg);border-radius:20px 20px 0 0;padding:20px 16px 32px;
+  width:100%;max-width:480px}
+.modal h3{font-size:17px;font-weight:700;margin-bottom:4px}
+.modal p{font-size:13px;color:var(--hint);margin-bottom:16px}
+.modal-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.opt-btn{padding:14px 10px;border:none;border-radius:12px;background:var(--sec);
+  font-size:15px;font-weight:600;cursor:pointer;text-align:center}
+.opt-btn:active{opacity:.75}
+.opt-btn.active{background:var(--btn);color:var(--btn-txt)}
+.modal-cancel{width:100%;padding:12px;border:none;border-radius:12px;
+  background:transparent;color:var(--hint);font-size:15px;cursor:pointer;margin-top:4px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.78);color:#fff;padding:10px 22px;border-radius:24px;
+  font-size:14px;display:none;z-index:999;white-space:nowrap}
+
+/* ── Auth / Login ──────────────────────────────────────────────────── */
+.login-hero{text-align:center;padding:32px 20px 16px}
+.login-hero .logo{font-size:52px}
+.login-hero h1{font-size:26px;font-weight:800;margin:8px 0 4px}
+.login-hero p{font-size:13px;color:var(--hint)}
+.tab-bar{display:flex;background:var(--sec);border-bottom:1px solid rgba(0,0,0,.07)}
+.tab{flex:1;padding:11px;border:none;background:none;font-size:14px;font-weight:500;
+  color:var(--hint);cursor:pointer;border-bottom:2.5px solid transparent;transition:color .15s}
+.tab.active{color:var(--btn);border-bottom-color:var(--btn)}
+.google-sep{display:flex;align-items:center;gap:10px;color:var(--hint);font-size:13px;margin:14px 0}
+.google-sep::before,.google-sep::after{content:'';flex:1;height:1px;background:rgba(0,0,0,.1)}
+.google-btn{width:100%;padding:12px;border:1.5px solid rgba(0,0,0,.15);border-radius:12px;
+  background:#fff;color:#333;font-size:15px;font-weight:500;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
+.google-btn svg{flex-shrink:0}
+
+/* ── Home cards ────────────────────────────────────────────────────── */
+.home-card{background:var(--sec);border-radius:14px;padding:16px;margin-bottom:10px;
+  cursor:pointer;transition:transform .1s;display:flex;align-items:center;gap:14px}
+.home-card:active{transform:scale(.97)}
+.home-icon{font-size:28px;flex-shrink:0}
+.home-info{flex:1;min-width:0}
+.home-name{font-size:16px;font-weight:700}
+.home-sub{font-size:12px;color:var(--hint);margin-top:2px}
+.home-arrow{color:var(--hint);font-size:20px;flex-shrink:0}
+
+/* ── Role / status badges ──────────────────────────────────────────── */
+.rbadge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.r-superadmin{background:#fce8ff;color:#7700aa}
+.r-moderador{background:#e8f0ff;color:#0044bb}
+.r-usuario{background:#f0f0f0;color:#555}
+.s-activo{color:#2e7d32;font-weight:600;font-size:12px}
+.s-pendiente{color:#e65100;font-weight:600;font-size:12px}
+.s-bloqueado{color:#c62828;font-weight:600;font-size:12px}
+
+/* ── Perfil ─────────────────────────────────────────────────────────── */
+.perfil-top{display:flex;flex-direction:column;align-items:center;padding:24px 16px 16px;gap:10px}
+.perfil-avatar{width:72px;height:72px;border-radius:50%;background:var(--btn);
+  color:var(--btn-txt);display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:700;overflow:hidden;flex-shrink:0}
+.perfil-avatar img{width:100%;height:100%;object-fit:cover}
+.perfil-nombre{font-size:20px;font-weight:700}
+.perfil-email{font-size:13px;color:var(--hint)}
+
+/* ── Admin user rows ────────────────────────────────────────────────── */
+.user-row{background:var(--sec);border-radius:12px;padding:12px 14px;margin-bottom:8px;
+  display:flex;align-items:center;gap:10px}
+.user-av{width:36px;height:36px;border-radius:50%;background:var(--btn);
+  color:var(--btn-txt);display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;flex-shrink:0;overflow:hidden}
+.user-av img{width:100%;height:100%;object-fit:cover}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:14px;font-weight:600}
+.user-meta{font-size:12px;color:var(--hint);margin-top:1px}
+.user-acts{display:flex;gap:5px;flex-shrink:0}
+
+/* ── Panel modal (vivienda users) ──────────────────────────────────── */
+.panel-modal{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column}
+.panel-modal.open{display:flex}
+
+/* ── Invite box ─────────────────────────────────────────────────────── */
+.invite-box{background:var(--sec);border-radius:12px;padding:12px 14px;margin-top:10px;
+  display:flex;align-items:center;gap:8px;word-break:break-all;font-size:13px}
+
+/* Cant-real inline edit */
+.cant-edit{display:flex;gap:6px;margin-top:6px;align-items:center}
+.cant-edit input{flex:1;padding:7px 10px;border-radius:8px;border:none;
+  background:var(--bg);font-size:14px;color:var(--text);outline:none;
+  box-shadow:0 0 0 1px rgba(0,0,0,.15)}
+.cant-edit button{background:var(--btn);color:var(--btn-txt);border:none;
+  border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer}
+
+/* Edit button on compra rows */
+.compra-edit{background:none;border:none;color:var(--btn);font-size:18px;
+  cursor:pointer;flex-shrink:0;padding:0 4px;opacity:.7}
+
+/* Inventariar modal - per-item rows */
+.modal-scroll{overflow-y:auto;max-height:48vh;margin-bottom:12px;padding-right:2px}
+.inv-item{padding:10px 0;border-bottom:1px solid rgba(0,0,0,.07)}
+.inv-item:last-child{border-bottom:none}
+.inv-item-name{font-weight:600;font-size:14px;margin-bottom:8px}
+.inv-item-sub{font-size:12px;color:var(--hint);font-weight:400;margin-left:5px}
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.inv-lote+.inv-lote{margin-top:8px;padding-top:8px;border-top:1px dashed rgba(0,0,0,.12)}
+.inv-add-btn{width:100%;margin-top:8px;padding:8px;border:1.5px dashed rgba(0,0,0,.2);border-radius:10px;background:transparent;color:var(--btn);font-size:13px;font-weight:600;cursor:pointer}
+.inv-rm-btn{background:none;border:none;color:var(--hint);font-size:12px;cursor:pointer;padding:3px 0;margin-top:2px}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ═════════════════════════════════════════════════════════════ -->
+<div id="view-login" class="view active">
+  <div class="login-hero">
+    <div class="logo">🏠</div>
+    <h1>Despensa</h1>
+    <p>Gestioná la despensa familiar</p>
+  </div>
+  <div class="tab-bar">
+    <button class="tab active" id="tab-reg" onclick="switchLoginTab('register')">Registrarse</button>
+    <button class="tab" id="tab-log" onclick="switchLoginTab('login')">Iniciar sesión</button>
+  </div>
+
+  <!-- Registro -->
+  <div class="content" id="pane-register">
+    <div class="fg"><label class="fl">Nombre *</label>
+      <input class="fi" id="reg-nombre" type="text" placeholder="Tu nombre"></div>
+    <div class="fg"><label class="fl">Email *</label>
+      <input class="fi" id="reg-email" type="email" placeholder="email@ejemplo.com"></div>
+    <div class="fg"><label class="fl">Contraseña * (mín. 6 caracteres)</label>
+      <input class="fi" id="reg-pass" type="password" placeholder="••••••"></div>
+    <button class="btn-p" onclick="doRegister()">✅ Crear cuenta</button>
+    <div class="google-sep"><span>o</span></div>
+    <button class="google-btn" id="google-btn-reg" onclick="signInWithGoogle()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.8 6C12.3 13 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.4-4.1 7.1-10.1 7.1-17.1z"/><path fill="#FBBC05" d="M10.4 28.8A14.7 14.7 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.6-5.9c-2.1 1.4-4.8 2.3-7.6 2.3-6.3 0-11.7-4.3-13.6-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
+      Continuar con Google
+    </button>
+    <p style="font-size:12px;color:var(--hint);text-align:center;margin-top:10px">
+      ¿Tenés un link de invitación? Registrate primero, luego usá el link.
+    </p>
+  </div>
+
+  <!-- Login -->
+  <div class="content" id="pane-login" style="display:none">
+    <div class="fg"><label class="fl">Email *</label>
+      <input class="fi" id="log-email" type="email" placeholder="email@ejemplo.com"></div>
+    <div class="fg"><label class="fl">Contraseña *</label>
+      <input class="fi" id="log-pass" type="password" placeholder="••••••"></div>
+    <button class="btn-p" onclick="doLogin()">Iniciar sesión</button>
+    <div class="google-sep"><span>o</span></div>
+    <button class="google-btn" id="google-btn-log" onclick="signInWithGoogle()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.8 6C12.3 13 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.4-4.1 7.1-10.1 7.1-17.1z"/><path fill="#FBBC05" d="M10.4 28.8A14.7 14.7 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.6-5.9c-2.1 1.4-4.8 2.3-7.6 2.3-6.3 0-11.7-4.3-13.6-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
+      Continuar con Google
+    </button>
+  </div>
+</div>
+
+<!-- ══ SELECTOR DE VIVIENDA ═══════════════════════════════════════════════ -->
+<div id="view-homes" class="view">
+  <div class="hdr">
+    <h2 style="flex:1">🏘️ Mis viviendas</h2>
+    <button class="act-btn" onclick="go('perfil',loadPerfil)" style="background:none;font-size:22px;color:var(--hint)">👤</button>
+  </div>
+  <div class="content">
+    <div id="homes-list"></div>
+    <button class="btn-p" style="margin-top:6px" onclick="showNewHomeModal()">+ Nueva vivienda</button>
+    <button class="btn-p sec" onclick="showJoinModal()">🔗 Unirse con invitación</button>
+  </div>
+</div>
+
+<!-- ══ PERFIL ═══════════════════════════════════════════════════════════════ -->
+<div id="view-perfil" class="view">
+  <div class="hdr"><button class="back" id="perfil-back">‹</button><h2>👤 Mi perfil</h2></div>
+  <div class="perfil-top">
+    <div class="perfil-avatar" id="perfil-avatar">?</div>
+    <div class="perfil-nombre" id="perfil-nombre">—</div>
+    <div class="perfil-email" id="perfil-email">—</div>
+    <div id="perfil-role"></div>
+  </div>
+  <div class="content">
+    <div class="stitle">Mis viviendas</div>
+    <div id="perfil-homes"></div>
+    <button class="btn-p danger" style="margin-top:16px;background:#ff3b30" onclick="doLogout()">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ═══════════════════════════════════════════════════════════ -->
+<div id="view-admin" class="view">
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>⚙️ Administración</h2></div>
+  <div class="tab-bar">
+    <button class="tab active" id="atab-usuarios" onclick="adminTab('usuarios')">Usuarios</button>
+    <button class="tab" id="atab-viviendas" onclick="adminTab('viviendas')">Viviendas</button>
+  </div>
+  <div class="content" id="admin-content"></div>
+</div>
+
+<!-- ══ PANEL: gestionar vivienda ═══════════════════════════════════════════ -->
+<div class="panel-modal" id="panel-vivienda">
+  <div class="hdr">
+    <button class="back" onclick="closePanelVivienda()">‹</button>
+    <h2 id="panel-vivienda-title">Vivienda</h2>
+  </div>
+  <div class="tab-bar">
+    <button class="tab active" id="vtab-usuarios" onclick="viviendaTab('usuarios')">Usuarios</button>
+    <button class="tab" id="vtab-invitar" onclick="viviendaTab('invitar')">Invitar</button>
+  </div>
+  <div class="content" id="panel-vivienda-content"></div>
+</div>
+
+<!-- ══ MODAL: nueva vivienda ══════════════════════════════════════════════ -->
+<div class="modal-bg" id="modal-new-home" onclick="closeModalNewHome(event)">
+  <div class="modal">
+    <h3>🏡 Nueva vivienda</h3>
+    <p style="margin-bottom:14px">Dale un nombre a tu casa o depto.</p>
+    <div class="fg"><label class="fl">Nombre *</label>
+      <input class="fi" id="nh-nombre" type="text" placeholder="Ej: Casa familiar"></div>
+    <div class="fg"><label class="fl">Descripción (opcional)</label>
+      <input class="fi" id="nh-desc" type="text" placeholder="Ej: Depto piso 3"></div>
+    <button class="btn-p" onclick="doCreateHome()">✅ Crear vivienda</button>
+    <button class="modal-cancel" onclick="closeModalNewHome()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: unirse con invitación ══════════════════════════════════════ -->
+<div class="modal-bg" id="modal-join" onclick="closeModalJoin(event)">
+  <div class="modal">
+    <h3>🔗 Unirse con invitación</h3>
+    <p style="margin-bottom:14px">Pegá el código o link de invitación.</p>
+    <div class="fg"><label class="fl">Código de invitación</label>
+      <input class="fi" id="join-token" type="text" placeholder="Código o URL completa"></div>
+    <button class="btn-p" onclick="doJoin()">Unirse</button>
+    <button class="modal-cancel" onclick="closeModalJoin()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ MENÚ ═════════════════════════════════════════════════════════════ -->
+<div id="view-menu" class="view">
+  <div class="menu-top">
+    <div class="logo">🏠</div>
+    <h1 id="menu-home-name">Despensa</h1>
+    <p id="subtitle">Cargando…</p>
+  </div>
+  <div class="grid">
+    <button class="mbtn" onclick="go('list',loadList)">
+      <span class="ico">📋</span><span>Ver todo</span>
+    </button>
+    <button class="mbtn" onclick="go('add')">
+      <span class="ico">➕</span><span>Agregar</span>
+    </button>
+    <button class="mbtn" onclick="go('expiring',loadExpiring)">
+      <span class="ico">⚠️</span><span>Por vencer</span>
+    </button>
+    <button class="mbtn" onclick="go('search')">
+      <span class="ico">🔍</span><span>Buscar</span>
+    </button>
+    <button class="mbtn" onclick="go('compras',loadCompras)">
+      <span class="ico">🛒</span><span>Lista compras</span>
+    </button>
+    <button class="mbtn" onclick="go('abiertos',loadAbiertos)">
+      <span class="ico">📂</span><span>Abiertos</span>
+    </button>
+    <button class="mbtn wide" onclick="go('delete',loadDeleteList)">
+      <span class="ico">🗑️</span><span>Eliminar</span>
+    </button>
+    <button class="mbtn" onclick="go('perfil',loadPerfil)">
+      <span class="ico">👤</span><span>Perfil</span>
+    </button>
+    <button class="mbtn" id="btn-admin" style="display:none" onclick="go('admin',()=>adminTab('usuarios'))">
+      <span class="ico">⚙️</span><span>Admin</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══ VER TODO ══════════════════════════════════════════════════════════ -->
+<div id="view-list" class="view">
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>📋 Despensa completa</h2></div>
+  <div class="content" id="list-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
+</div>
+
+<!-- ══ AGREGAR ═══════════════════════════════════════════════════════════ -->
+<div id="view-add" class="view">
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>➕ Agregar insumo</h2></div>
+  <div class="content">
+    <div class="fg"><label class="fl">Producto *</label>
+      <input class="fi" id="f-nombre" placeholder="Ej: Azúcar" type="text" list="dl-nombres" autocomplete="off"></div>
+    <div class="fg"><label class="fl">Marca</label>
+      <input class="fi" id="f-marca" placeholder="Ej: Ledesma" type="text" list="dl-marcas" autocomplete="off"></div>
+    <div class="fg"><label class="fl">Unidades (cantidad de paquetes)</label>
+      <input class="fi" id="f-unidades" type="number" min="1" value="1"></div>
+    <div class="fg"><label class="fl">Contenido por unidad</label>
+      <input class="fi" id="f-cantidad" placeholder="Ej: 1 kg, 500 ml" type="text"></div>
+    <div class="fg"><label class="fl">Fecha de compra</label>
+      <input class="fi" id="f-compra" type="date"></div>
+    <div class="fg"><label class="fl">Fecha de vencimiento</label>
+      <input class="fi" id="f-vence" type="date"></div>
+    <div class="fg"><label class="fl">Comentario</label>
+      <input class="fi" id="f-comentario" placeholder="Ej: Para las tortas" type="text"></div>
+    <button class="btn-p" onclick="submitAdd()">✅ Guardar</button>
+  </div>
+</div>
+
+<!-- ══ POR VENCER ════════════════════════════════════════════════════════ -->
+<div id="view-expiring" class="view">
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>⚠️ Por vencer</h2></div>
+  <div class="content" id="expiring-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
+</div>
+
+<!-- ══ BUSCAR ════════════════════════════════════════════════════════════ -->
+<div id="view-search" class="view">
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>🔍 Buscar</h2></div>
+  <div class="search-wrap">
+    <input class="fi" id="search-q" placeholder="Nombre del producto…" type="text" oninput="doSearch(this.value)">
+  </div>
+  <div class="content" id="search-content">
+    <div class="empty"><div class="ico">🔍</div><p>Escribí para buscar</p></div>
+  </div>
+</div>
+
+<!-- ══ ABIERTOS ══════════════════════════════════════════════════════════ -->
+<div id="view-abiertos" class="view">
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>📂 Productos abiertos</h2></div>
+  <div class="content" id="abiertos-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
+</div>
+
+<!-- ══ ELIMINAR ══════════════════════════════════════════════════════════ -->
+<div id="view-delete" class="view">
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>🗑️ Eliminar</h2></div>
+  <div class="content" id="delete-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
+</div>
+
+<!-- ══ LISTA DE COMPRAS ══════════════════════════════════════════════════ -->
+<div id="view-compras" class="view">
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>🛒 Lista de compras</h2>
+    <button class="act-btn" style="flex-shrink:0" onclick="go('add-compra')">+ Agregar</button>
+  </div>
+  <div class="content" id="compras-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
+  <div class="action-bar" id="compras-bar" style="display:none">
+    <button class="btn-p" onclick="showInventariarModal()">🏪 Ingresar al inventario</button>
+  </div>
+</div>
+
+<!-- ══ AGREGAR A LISTA ════════════════════════════════════════════════════ -->
+<div id="view-add-compra" class="view">
+  <div class="hdr"><button class="back" onclick="go('compras',loadCompras)">‹</button><h2>🛒 Agregar a la lista</h2></div>
+  <div class="content">
+    <div class="fg"><label class="fl">Producto *</label>
+      <input class="fi" id="lc-nombre" placeholder="Ej: Fideos" type="text" list="dl-nombres" autocomplete="off"></div>
+    <div class="fg"><label class="fl">Marca</label>
+      <input class="fi" id="lc-marca" placeholder="Ej: Matarazzo" type="text" list="dl-marcas" autocomplete="off"></div>
+    <div class="fg"><label class="fl">Unidades (cantidad de paquetes)</label>
+      <input class="fi" id="lc-unidades" type="number" min="1" value="1"></div>
+    <div class="fg"><label class="fl">Contenido por unidad</label>
+      <input class="fi" id="lc-cantidad" placeholder="Ej: 500g, 1 kg, 1 l" type="text"></div>
+    <div class="fg"><label class="fl">Comentario</label>
+      <input class="fi" id="lc-comentario" placeholder="Ej: La oferta del jueves" type="text"></div>
+    <button class="btn-p" onclick="submitCompra()">✅ Agregar a la lista</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: Consumo ════════════════════════════════════════════════════ -->
+<div class="modal-bg" id="modal-consumo" onclick="closeConsumoModal(event)">
+  <div class="modal">
+    <h3 id="modal-consumo-title">Abrir producto</h3>
+    <p id="modal-consumo-sub">¿Cuánto queda en el paquete?</p>
+    <div class="modal-opts">
+      <button class="opt-btn" onclick="applyConsumo('lleno')">🆕 Recién abierto</button>
+      <button class="opt-btn" onclick="applyConsumo('3/4')">3/4</button>
+      <button class="opt-btn" onclick="applyConsumo('1/2')">1/2</button>
+      <button class="opt-btn" onclick="applyConsumo('1/4')">1/4</button>
+    </div>
+    <button class="opt-btn danger" style="width:100%;margin-bottom:6px;background:#ff3b30;color:#fff;border-radius:12px;padding:13px" onclick="doVaciar()">
+      🗑️ Ya se terminó (vaciar)
+    </button>
+    <button class="modal-cancel" onclick="closeConsumoModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: Inventariar ════════════════════════════════════════════════ -->
+<div class="modal-bg" id="modal-inv" onclick="closeInvModal(event)">
+  <div class="modal" style="max-height:88vh;display:flex;flex-direction:column">
+    <h3>🏪 Ingresar al inventario</h3>
+    <p>Ajustá unidades y fecha de vencimiento por producto.</p>
+    <div id="inv-items" class="modal-scroll"></div>
+    <button class="btn-p" onclick="doInventariar()">✅ Ingresar todo</button>
+    <button class="modal-cancel" onclick="closeInvModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: Editar ítem de lista ═══════════════════════════════════════ -->
+<div class="modal-bg" id="modal-edit-compra" onclick="closeEditCompra(event)">
+  <div class="modal" style="max-height:88vh;overflow-y:auto">
+    <h3>✏️ Editar producto</h3>
+    <p style="margin-bottom:14px">Modificá los datos del producto en la lista.</p>
+    <input type="hidden" id="ec-id">
+    <div class="fg"><label class="fl">Producto *</label>
+      <input class="fi" id="ec-nombre" type="text" list="dl-nombres" autocomplete="off"></div>
+    <div class="fg"><label class="fl">Marca</label>
+      <input class="fi" id="ec-marca" type="text" list="dl-marcas" autocomplete="off"></div>
+    <div class="fg"><label class="fl">Unidades (cantidad de paquetes)</label>
+      <input class="fi" id="ec-unidades" type="number" min="1" value="1"></div>
+    <div class="fg"><label class="fl">Contenido por unidad</label>
+      <input class="fi" id="ec-cantidad" type="text" placeholder="Ej: 500g, 1 kg, 1 l"></div>
+    <div class="fg"><label class="fl">Comentario</label>
+      <input class="fi" id="ec-comentario" type="text" placeholder="Ej: La oferta del jueves"></div>
+    <button class="btn-p" onclick="submitEditCompra()">✅ Guardar cambios</button>
+    <button class="modal-cancel" onclick="closeEditCompra()">Cancelar</button>
+  </div>
+</div>
+
+<!-- Datalists para autocompletado -->
+<datalist id="dl-nombres"></datalist>
+<datalist id="dl-marcas"></datalist>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Init ─────────────────────────────────────────────────────────────── */
+const tg   = window.Telegram.WebApp;
+tg.ready(); tg.expand();
+const init   = tg.initDataUnsafe || {};
+const BASE   = window.location.origin;
+
+// Estado global de auth
+let _token    = localStorage.getItem('despensa_token') || null;
+let _me       = null;
+let _myHomes  = [];
+let chatId    = null;          // chat_id de la vivienda activa
+let _currentVid  = null;       // id de la vivienda activa
+let _homeName    = '';
+let _googleReady = false;
+let _panelVid    = null;       // vivienda actualmente abierta en el panel
+
+document.getElementById('f-compra').valueAsDate = new Date();
+
+/* ── Util ─────────────────────────────────────────────────────────────── */
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function fmtF(iso){if(!iso)return'—';const[y,m,d]=iso.split('-');return`${d}/${m}/${y}`}
+function toast(msg){const e=document.getElementById('toast');e.textContent=msg;e.style.display='block';setTimeout(()=>e.style.display='none',2500)}
+
+function sem(fv){
+  if(!fv)return null;
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const v=new Date(fv+'T00:00:00');
+  const d=Math.round((v-hoy)/86400000);
+  if(d<0)return{t:'VENCIDO',c:'bg-red'};
+  if(d===0)return{t:'VENCE HOY',c:'bg-red'};
+  if(d<=3)return{t:`${d}d`,c:'bg-orange'};
+  if(d<=7)return{t:`${d}d`,c:'bg-yellow'};
+  return{t:`${d}d`,c:'bg-green'};
+}
+
+function consumoEmoji(c){
+  return{lleno:'🆕 Recién abierto','3/4':'▓▓▓░ 3/4','1/2':'▓▓░░ 1/2','1/4':'▓░░░ 1/4'}[c]||c||'📂 Abierto';
+}
+
+async function api(url,opts={}){
+  opts.headers = {'Authorization': `Bearer ${_token||''}`,...(opts.headers||{})};
+  try{
+    const r=await fetch(BASE+url,opts);
+    if(r.status===401){doLogout();return null}
+    return r.ok?r.json():null
+  }
+  catch{toast('❌ Error de conexión');return null}
+}
+
+/* ── Navigation ───────────────────────────────────────────────────────── */
+function go(name,onShow){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  if(onShow)onShow();
+}
+
+/* ── Inventory card HTML ──────────────────────────────────────────────── */
+function invCard(item, opts={}){
+  const s=sem(item.fecha_vence);
+  const badge=s?`<span class="badge ${s.c}">${s.t}</span>`:'';
+  const uniBadge=item.unidades>1?`<span class="badge bg-blue">${item.unidades} uds.</span>`:'';
+  const delBtn=opts.withDelete?`<button class="del-abs" onclick="deleteItem(${item.id})">Eliminar</button>`:'';
+  const foto=item.has_photo?`<img class="card-img" src="${BASE}/api/photo/${item.id}?chat_id=${chatId}" loading="lazy" alt="foto">`:'';
+
+  let actions='';
+  if(opts.withActions){
+    if(item.abiertas>0){
+      actions=`<div class="card-actions">
+        <span class="badge bg-blue">${consumoEmoji(item.consumo)}</span>
+        <button class="act-btn secondary" onclick="openConsumoModal(${item.id},'update','${esc(item.nombre)}')">Actualizar</button>
+        <button class="act-btn danger" onclick="openConsumoModal(${item.id},'vaciar','${esc(item.nombre)}')">Vaciar</button>
+      </div>`;
+    } else {
+      actions=`<div class="card-actions">
+        <button class="act-btn" onclick="openConsumoModal(${item.id},'open','${esc(item.nombre)}')">📂 Abrir una unidad</button>
+      </div>`;
+    }
+  }
+
+  return`<div class="card" id="card-${item.id}">
+    ${delBtn}
+    <div class="card-name">${esc(item.nombre)}</div>
+    ${item.marca?`<div class="card-marca">🏷️ ${esc(item.marca)}</div>`:''}
+    ${item.cantidad?`<div class="card-line">Contenido: ${esc(item.cantidad)}</div>`:''}
+    <div class="card-line">Compra: ${fmtF(item.fecha_compra)}</div>
+    ${item.fecha_vence?`<div class="card-line">Vence: ${fmtF(item.fecha_vence)} ${badge}</div>`:''}
+    ${item.comentario?`<div class="card-line">💬 ${esc(item.comentario)}</div>`:''}
+    ${item.agregado_por?`<div class="card-line" style="font-size:11px;margin-top:3px">👤 ${esc(item.agregado_por)}</div>`:''}
+    <div style="margin-top:6px">${uniBadge}${item.abiertas?`<span class="badge bg-blue" style="margin-left:4px">📂 Abierto</span>`:''}</div>
+    ${actions}${foto}
+  </div>`;
+}
+
+/* ══ LIST ═════════════════════════════════════════════════════════════════ */
+async function loadList(){
+  const el=document.getElementById('list-content');
+  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  const items=await api(`/api/items?chat_id=${chatId}`);
+  if(!items)return;
+  document.getElementById('subtitle').textContent=items.length?`${items.length} productos`:'La despensa está vacía';
+  el.innerHTML=items.length?items.map(i=>invCard(i,{withActions:true})).join('')
+    :'<div class="empty"><div class="ico">📭</div><p>La despensa está vacía</p></div>';
+}
+
+/* ══ ADD ══════════════════════════════════════════════════════════════════ */
+async function submitAdd(){
+  const nombre=document.getElementById('f-nombre').value.trim();
+  if(!nombre){toast('El nombre es obligatorio');return}
+  const body={chat_id:chatId,nombre,
+    marca:document.getElementById('f-marca').value.trim()||null,
+    unidades:parseInt(document.getElementById('f-unidades').value)||1,
+    cantidad:document.getElementById('f-cantidad').value.trim()||null,
+    fecha_compra:document.getElementById('f-compra').value||null,
+    fecha_vence:document.getElementById('f-vence').value||null,
+    comentario:document.getElementById('f-comentario').value.trim()||null,
+    usuario:init?.user?.first_name||'App'};
+  const ok=await api('/api/items',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(ok){
+    ['f-nombre','f-marca','f-cantidad','f-vence','f-comentario'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-unidades').value='1';
+    document.getElementById('f-compra').valueAsDate=new Date();
+    toast(`✅ ${nombre} guardado`);go('menu');refreshSubtitle();loadSuggestions();
+  }
+}
+
+/* ══ EXPIRING ══════════════════════════════════════════════════════════════ */
+async function loadExpiring(){
+  const el=document.getElementById('expiring-content');
+  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  const data=await api(`/api/expiring?chat_id=${chatId}`);
+  if(!data)return;
+  let html='';
+  if(data.expired?.length){
+    html+=`<div class="stitle">🔴 Vencidos (${data.expired.length})</div>`;
+    html+=data.expired.map(i=>invCard(i)).join('');
+  }
+  if(data.expiring?.length){
+    html+=`<div class="stitle">🟡 Vencen pronto (${data.expiring.length})</div>`;
+    html+=data.expiring.map(i=>invCard(i)).join('');
+  }
+  el.innerHTML=html||'<div class="empty"><div class="ico">✅</div><p>Todo en orden</p></div>';
+}
+
+/* ══ SEARCH ════════════════════════════════════════════════════════════════ */
+let st=null;
+async function doSearch(q){
+  clearTimeout(st);const el=document.getElementById('search-content');
+  if(!q.trim()){el.innerHTML='<div class="empty"><div class="ico">🔍</div><p>Escribí para buscar</p></div>';return}
+  st=setTimeout(async()=>{
+    const items=await api(`/api/search?chat_id=${chatId}&q=${encodeURIComponent(q)}`);
+    if(!items)return;
+    el.innerHTML=items.length?items.map(i=>invCard(i,{withActions:true})).join('')
+      :'<div class="empty"><div class="ico">🔍</div><p>Sin resultados</p></div>';
+  },400);
+}
+
+/* ══ ABIERTOS ══════════════════════════════════════════════════════════════ */
+async function loadAbiertos(){
+  const el=document.getElementById('abiertos-content');
+  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  const items=await api(`/api/abiertos?chat_id=${chatId}`);
+  if(!items)return;
+  if(!items.length){el.innerHTML='<div class="empty"><div class="ico">📦</div><p>No hay productos abiertos</p></div>';return}
+  el.innerHTML=items.map(i=>invCard(i,{withActions:true})).join('');
+}
+
+/* ══ DELETE ════════════════════════════════════════════════════════════════ */
+async function loadDeleteList(){
+  const el=document.getElementById('delete-content');
+  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  const items=await api(`/api/items?chat_id=${chatId}`);
+  if(!items)return;
+  el.innerHTML=items.length?items.map(i=>invCard(i,{withDelete:true})).join('')
+    :'<div class="empty"><div class="ico">📭</div><p>La despensa está vacía</p></div>';
+}
+
+async function deleteItem(id){
+  tg.showConfirm('¿Eliminar este producto del inventario?',async ok=>{
+    if(!ok)return;
+    const r=await api(`/api/items/${id}?chat_id=${chatId}`,{method:'DELETE'});
+    if(r){document.getElementById('card-'+id)?.remove();toast('✅ Eliminado');refreshSubtitle()}
+  });
+}
+
+/* ══ COMPRAS ═══════════════════════════════════════════════════════════════ */
+let _comprasData=[];
+
+async function loadCompras(){
+  const el=document.getElementById('compras-content');
+  const bar=document.getElementById('compras-bar');
+  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  const items=await api(`/api/compras?chat_id=${chatId}`);
+  if(!items)return;
+  _comprasData=items;
+  if(!items.length){
+    el.innerHTML='<div class="empty"><div class="ico">🛒</div><p>Lista vacía — tocá "+ Agregar"</p></div>';
+    bar.style.display='none';return;
+  }
+  const comprados=items.filter(i=>i.comprado).length;
+  bar.style.display=comprados?'block':'none';
+  el.innerHTML=items.map(i=>compraRow(i)).join('');
+}
+
+function compraRow(item){
+  const cantReal=item.cant_real?`<div class="compra-real">✏️ Compré: ${esc(item.cant_real)}</div>`:'';
+  const uniStr=item.unidades>1?`${item.unidades} uds.`:null;
+  const sub=[item.marca,uniStr,item.cantidad].filter(Boolean).join(' · ');
+  const cantEditBtn=item.comprado&&!item.cant_real
+    ?`<div class="cant-edit" id="edit-${item.id}">
+        <input placeholder="Cantidad real comprada" type="text" id="cr-${item.id}">
+        <button onclick="saveCantReal(${item.id})">OK</button>
+      </div>`:'';
+  return`<div class="compra-row${item.comprado?' bought':''}" id="crow-${item.id}">
+    <div class="chk${item.comprado?' checked':''}" onclick="toggleCompra(${item.id},${item.comprado})">${item.comprado?'✓':''}</div>
+    <div class="compra-info">
+      <div class="compra-name">${esc(item.nombre)}</div>
+      ${sub?`<div class="compra-sub">${esc(sub)}</div>`:''}
+      ${item.comentario?`<div class="compra-sub">💬 ${esc(item.comentario)}</div>`:''}
+      ${cantReal}${cantEditBtn}
+    </div>
+    <button class="compra-edit" onclick="openEditCompra(${item.id})" title="Editar">✏️</button>
+    <button class="compra-del" onclick="deleteCompra(${item.id})">×</button>
+  </div>`;
+}
+
+async function toggleCompra(id, wasBought){
+  const r=await api(`/api/compras/${id}/toggle`,{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:chatId})});
+  if(r)loadCompras();
+}
+
+async function saveCantReal(id){
+  const val=document.getElementById('cr-'+id)?.value?.trim();
+  if(!val)return;
+  await api(`/api/compras/${id}/cant_real`,{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:chatId,cant_real:val})});
+  loadCompras();
+}
+
+async function deleteCompra(id){
+  tg.showConfirm('¿Eliminar este producto de la lista?',async ok=>{
+    if(!ok)return;
+    const r=await api(`/api/compras/${id}?chat_id=${chatId}`,{method:'DELETE'});
+    if(r){document.getElementById('crow-'+id)?.remove();loadCompras()}
+  });
+}
+
+async function submitCompra(){
+  const nombre=document.getElementById('lc-nombre').value.trim();
+  if(!nombre){toast('El nombre es obligatorio');return}
+  const body={chat_id:chatId,nombre,
+    marca:document.getElementById('lc-marca').value.trim()||null,
+    unidades:parseInt(document.getElementById('lc-unidades').value)||1,
+    cantidad:document.getElementById('lc-cantidad').value.trim()||null,
+    comentario:document.getElementById('lc-comentario').value.trim()||null,
+    usuario:init?.user?.first_name||'App'};
+  const ok=await api('/api/compras',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(ok){
+    ['lc-nombre','lc-marca','lc-cantidad','lc-comentario'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('lc-unidades').value='1';
+    toast(`✅ ${nombre} agregado a la lista`);go('compras',loadCompras);loadSuggestions();
+  }
+}
+
+/* ── Inventariar ────────────────────────────────────────────────────────── */
+function _loteHTML(first){
+  return`<div class="inv-lote">
+    <div class="inv-grid">
+      <div><label class="fl">Unidades</label>
+        <input class="fi inv-uni" type="number" min="1" value="${first||1}"></div>
+      <div><label class="fl">Vencimiento</label>
+        <input class="fi inv-fv" type="date"></div>
+    </div>
+    ${first?'':'<button class="inv-rm-btn" onclick="this.closest(\'.inv-lote\').remove()">× quitar este lote</button>'}
+  </div>`;
+}
+
+function showInventariarModal(){
+  const comprados=_comprasData.filter(i=>i.comprado);
+  if(!comprados.length){toast('No hay productos tildados');return}
+  document.getElementById('inv-items').innerHTML=comprados.map(item=>{
+    const sub=[item.marca,item.cantidad].filter(Boolean).join(' · ');
+    return`<div class="inv-item">
+      <div class="inv-item-name">${esc(item.nombre)}${sub?`<span class="inv-item-sub">${esc(sub)}</span>`:''}</div>
+      <div class="inv-lotes" id="inv-lotes-${item.id}">${_loteHTML(item.unidades||1)}</div>
+      <button class="inv-add-btn" onclick="addLote(${item.id})">+ Agregar con otra fecha de vencimiento</button>
+    </div>`;
+  }).join('');
+  document.getElementById('modal-inv').classList.add('open');
+}
+
+function addLote(itemId){
+  const c=document.getElementById('inv-lotes-'+itemId);
+  const div=document.createElement('div');
+  div.innerHTML=_loteHTML(0);
+  c.appendChild(div.firstElementChild);
+}
+
+function closeInvModal(e){
+  if(!e||e.target===document.getElementById('modal-inv'))
+    document.getElementById('modal-inv').classList.remove('open');
+}
+
+async function doInventariar(){
+  const comprados=_comprasData.filter(i=>i.comprado);
+  const items=comprados.map(item=>{
+    const c=document.getElementById('inv-lotes-'+item.id);
+    const lotes=Array.from(c.querySelectorAll('.inv-lote')).map(el=>({
+      unidades:parseInt(el.querySelector('.inv-uni')?.value)||1,
+      fecha_vence:el.querySelector('.inv-fv')?.value||null,
+    }));
+    return{id:item.id,lotes};
+  });
+  const r=await api('/api/compras/inventariar',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:chatId,items,usuario:init?.user?.first_name||'App'})});
+  if(r&&r.ok){
+    document.getElementById('modal-inv').classList.remove('open');
+    toast(`✅ ${r.agregados.length} producto(s) al inventario`);
+    loadCompras();refreshSubtitle();
+  }
+}
+
+/* ── Editar ítem de lista de compras ────────────────────────────────────── */
+function openEditCompra(id){
+  const item=_comprasData.find(i=>i.id===id);
+  if(!item)return;
+  document.getElementById('ec-id').value=id;
+  document.getElementById('ec-nombre').value=item.nombre||'';
+  document.getElementById('ec-marca').value=item.marca||'';
+  document.getElementById('ec-unidades').value=item.unidades||1;
+  document.getElementById('ec-cantidad').value=item.cantidad||'';
+  document.getElementById('ec-comentario').value=item.comentario||'';
+  document.getElementById('modal-edit-compra').classList.add('open');
+}
+
+function closeEditCompra(e){
+  if(!e||e.target===document.getElementById('modal-edit-compra'))
+    document.getElementById('modal-edit-compra').classList.remove('open');
+}
+
+async function submitEditCompra(){
+  const id=parseInt(document.getElementById('ec-id').value);
+  const nombre=document.getElementById('ec-nombre').value.trim();
+  if(!nombre){toast('El nombre es obligatorio');return}
+  const body={
+    chat_id:chatId,nombre,
+    marca:document.getElementById('ec-marca').value.trim()||null,
+    unidades:parseInt(document.getElementById('ec-unidades').value)||1,
+    cantidad:document.getElementById('ec-cantidad').value.trim()||null,
+    comentario:document.getElementById('ec-comentario').value.trim()||null,
+  };
+  const ok=await api(`/api/compras/${id}`,{method:'PUT',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(ok){closeEditCompra();toast('✅ Producto actualizado');loadCompras()}
+}
+
+/* ══ CONSUMO MODAL ═════════════════════════════════════════════════════════ */
+let _modalItemId=null,_modalMode=null;
+
+function openConsumoModal(id,mode,nombre){
+  _modalItemId=id;_modalMode=mode;
+  const title=document.getElementById('modal-consumo-title');
+  const sub=document.getElementById('modal-consumo-sub');
+  const vBtn=document.querySelector('#modal-consumo .opt-btn.danger');
+  if(mode==='open'){title.textContent=`Abrir: ${nombre}`;sub.textContent='¿Cuánto quedará en el paquete al abrirlo?';vBtn.style.display='none'}
+  else if(mode==='update'){title.textContent=`Actualizar: ${nombre}`;sub.textContent='¿Cuánto queda actualmente?';vBtn.style.display='block'}
+  else if(mode==='vaciar'){title.textContent=`Vaciar: ${nombre}`;sub.textContent='¿Cuánto queda antes de vaciarlo?';vBtn.style.display='block'}
+  document.getElementById('modal-consumo').classList.add('open');
+}
+
+function closeConsumoModal(e){
+  if(!e||e.target===document.getElementById('modal-consumo'))
+    document.getElementById('modal-consumo').classList.remove('open');
+}
+
+async function applyConsumo(consumo){
+  closeConsumoModal();
+  if(_modalMode==='open'){
+    const r=await api(`/api/items/${_modalItemId}/abrir`,{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:chatId,consumo})});
+    if(r){toast(`📂 Producto abierto (${consumoEmoji(consumo)})`);reloadCurrentView()}
+  } else {
+    const r=await api(`/api/items/${_modalItemId}/consumo`,{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:chatId,consumo})});
+    if(r){toast(`✅ Consumo actualizado`);reloadCurrentView()}
+  }
+}
+
+async function doVaciar(){
+  closeConsumoModal();
+  tg.showConfirm('¿Marcar como vacío? Se descontará del stock.',async ok=>{
+    if(!ok)return;
+    const r=await api(`/api/items/${_modalItemId}/vaciar`,{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:chatId})});
+    if(r){
+      if(r.result==='deleted')toast('🗑️ Último paquete consumido — eliminado del inventario');
+      else toast('✅ Paquete vacío — quedan más en stock');
+      reloadCurrentView();refreshSubtitle();
+    }
+  });
+}
+
+function reloadCurrentView(){
+  const active=document.querySelector('.view.active')?.id;
+  if(active==='view-list')loadList();
+  else if(active==='view-abiertos')loadAbiertos();
+  else if(active==='view-search')doSearch(document.getElementById('search-q').value);
+}
+
+/* ── Subtitle ─────────────────────────────────────────────────────────── */
+async function refreshSubtitle(){
+  if(!chatId)return;
+  const items=await api(`/api/items?chat_id=${chatId}`);
+  if(items)document.getElementById('subtitle').textContent=items.length?`${items.length} productos`:'La despensa está vacía';
+}
+
+/* ── Sugerencias (autocompletado) ────────────────────────────────────── */
+async function loadSuggestions() {
+  if(!chatId)return;
+  const data = await api(`/api/suggestions?chat_id=${chatId}`);
+  if (!data) return;
+  document.getElementById('dl-nombres').innerHTML =
+    data.nombres.map(n=>`<option value="${esc(n)}">`).join('');
+  document.getElementById('dl-marcas').innerHTML =
+    data.marcas.map(m=>`<option value="${esc(m)}">`).join('');
+}
+
+/* ══ AUTH ═══════════════════════════════════════════════════════════════════ */
+
+function switchLoginTab(tab){
+  document.getElementById('pane-register').style.display = tab==='register'?'':'none';
+  document.getElementById('pane-login').style.display    = tab==='login'   ?'':'none';
+  document.getElementById('tab-reg').classList.toggle('active',tab==='register');
+  document.getElementById('tab-log').classList.toggle('active',tab==='login');
+}
+
+async function doRegister(){
+  const nombre=document.getElementById('reg-nombre').value.trim();
+  const email =document.getElementById('reg-email').value.trim();
+  const pass  =document.getElementById('reg-pass').value;
+  if(!nombre||!email||pass.length<6){toast('Completá todos los campos (contraseña ≥ 6 chars)');return}
+  const r=await fetch(BASE+'/api/auth/register',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({nombre,email,password:pass})}).then(r=>r.json()).catch(()=>null);
+  if(r?.ok){_token=r.token;localStorage.setItem('despensa_token',_token);_me=r.usuario;postLogin()}
+  else toast('❌ '+(r?.error||'Error al registrarse'));
+}
+
+async function doLogin(){
+  const email=document.getElementById('log-email').value.trim();
+  const pass =document.getElementById('log-pass').value;
+  if(!email||!pass){toast('Completá email y contraseña');return}
+  const r=await fetch(BASE+'/api/auth/login',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email,password:pass})}).then(r=>r.json()).catch(()=>null);
+  if(r?.ok){_token=r.token;localStorage.setItem('despensa_token',_token);_me=r.usuario;postLogin()}
+  else toast('❌ '+(r?.error||'Email o contraseña incorrectos'));
+}
+
+/* ── Google Sign-In ──────────────────────────────────────────────────── */
+(async function initGoogleSignIn(){
+  try{
+    const cfg=await fetch(BASE+'/api/config').then(r=>r.json()).catch(()=>({}));
+    if(!cfg.google_client_id){
+      document.querySelectorAll('.google-sep,.google-btn').forEach(e=>e.style.display='none');
+      return;
+    }
+    await new Promise(resolve=>{
+      const s=document.createElement('script');
+      s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=resolve;
+      document.head.appendChild(s);
+    });
+    google.accounts.id.initialize({client_id:cfg.google_client_id,callback:handleGoogleToken});
+    _googleReady=true;
+  }catch(e){document.querySelectorAll('.google-sep,.google-btn').forEach(el=>el.style.display='none')}
+})();
+
+function signInWithGoogle(){
+  if(!_googleReady){toast('Google Sign-In no disponible');return}
+  google.accounts.id.prompt();
+}
+
+async function handleGoogleToken(response){
+  const r=await fetch(BASE+'/api/auth/google',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({credential:response.credential})}).then(r=>r.json()).catch(()=>null);
+  if(r?.ok){_token=r.token;localStorage.setItem('despensa_token',_token);_me=r.usuario;postLogin()}
+  else toast('❌ '+(r?.error||'Error con Google'));
+}
+
+/* ── Post-login flow ─────────────────────────────────────────────────── */
+async function postLogin(){
+  const invCode=new URLSearchParams(location.search).get('invite');
+  if(invCode){
+    const r=await api(`/api/invitacion/${invCode}/usar`,{method:'POST'});
+    if(r?.ok)toast(`✅ Te uniste a "${r.vivienda}"`);
+    else toast('⚠️ '+(r?.error||'Invitación inválida'));
+  }
+  const me=await api('/api/me');
+  if(!me){doLogout();return}
+  _me=me.usuario;_myHomes=me.viviendas;
+  document.getElementById('btn-admin').style.display=_me.rol==='superadmin'?'':'none';
+  const tgChatId=String(init?.chat?.id||init?.user?.id||'');
+  if(tgChatId&&tgChatId!=='undefined'){
+    const tgHome=_myHomes.find(h=>String(h.chat_id)===tgChatId);
+    if(tgHome){selectHome(tgHome.chat_id,tgHome.nombre,tgHome.id);return}
+  }
+  if(_myHomes.length===1){selectHome(_myHomes[0].chat_id,_myHomes[0].nombre,_myHomes[0].id);return}
+  go('homes',loadHomes);
+}
+
+function selectHome(chat_id,nombre,vid){
+  chatId=chat_id;_currentVid=vid;_homeName=nombre;
+  document.getElementById('menu-home-name').textContent=nombre||'Despensa';
+  localStorage.setItem('despensa_last_home',JSON.stringify({chat_id,nombre,vid}));
+  go('menu');refreshSubtitle();loadSuggestions();
+}
+
+function doLogout(){
+  if(_token)api('/api/auth/logout',{method:'POST'});
+  _token=null;_me=null;chatId=null;
+  localStorage.removeItem('despensa_token');
+  localStorage.removeItem('despensa_last_home');
+  go('login');
+}
+
+/* ══ HOMES ══════════════════════════════════════════════════════════════════ */
+
+async function loadHomes(){
+  const el=document.getElementById('homes-list');
+  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  const homes=await api('/api/viviendas');
+  if(!homes)return;
+  _myHomes=homes;
+  if(!homes.length){
+    el.innerHTML='<div class="empty"><div class="ico">🏠</div><p>No tenés viviendas aún.<br>Creá una o usá un link de invitación.</p></div>';
+    return;
+  }
+  el.innerHTML=homes.map(h=>`
+    <div class="home-card" onclick="selectHome('${esc(h.chat_id)}','${esc(h.nombre)}',${h.id})">
+      <div class="home-icon">🏠</div>
+      <div class="home-info">
+        <div class="home-name">${esc(h.nombre)}</div>
+        <div class="home-sub">${h.n_usuarios!=null?`${h.n_usuarios} usuario(s)`:''}</div>
+        <div class="home-sub" style="margin-top:3px">
+          <span class="rbadge r-${h.mi_rol||'usuario'}">${h.mi_rol||'usuario'}</span>
+        </div>
+      </div>
+      <span class="home-arrow">›</span>
+    </div>`).join('');
+}
+
+function showNewHomeModal(){document.getElementById('modal-new-home').classList.add('open')}
+function closeModalNewHome(e){if(!e||e.target===document.getElementById('modal-new-home'))document.getElementById('modal-new-home').classList.remove('open')}
+
+async function doCreateHome(){
+  const nombre=(document.getElementById('nh-nombre').value||'').trim();
+  if(!nombre){toast('El nombre es obligatorio');return}
+  const r=await api('/api/viviendas',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({nombre,descripcion:document.getElementById('nh-desc').value.trim()||null})});
+  if(r?.ok){
+    closeModalNewHome();
+    document.getElementById('nh-nombre').value='';document.getElementById('nh-desc').value='';
+    toast('✅ Vivienda creada');selectHome(r.chat_id,nombre,r.id);
+  }
+}
+
+function showJoinModal(){document.getElementById('modal-join').classList.add('open')}
+function closeModalJoin(e){if(!e||e.target===document.getElementById('modal-join'))document.getElementById('modal-join').classList.remove('open')}
+
+async function doJoin(){
+  let val=(document.getElementById('join-token').value||'').trim();
+  const m=val.match(/[?&]invite=([^&]+)/)||val.match(/\/([A-Za-z0-9_-]{16,})$/);
+  if(m)val=m[1];
+  const r=await api(`/api/invitacion/${val}/usar`,{method:'POST'});
+  if(r?.ok){
+    closeModalJoin();document.getElementById('join-token').value='';
+    toast(`✅ Te uniste a "${r.vivienda}"`);
+    const me=await api('/api/me');if(me){_myHomes=me.viviendas;}
+    loadHomes();
+  } else toast('❌ '+(r?.error||'Invitación inválida'));
+}
+
+/* ══ PERFIL ══════════════════════════════════════════════════════════════════ */
+
+function loadPerfil(){
+  if(!_me){go('login');return}
+  document.getElementById('perfil-back').onclick=()=>go(chatId?'menu':'homes',chatId?null:loadHomes);
+  const av=document.getElementById('perfil-avatar');
+  if(_me.avatar){av.innerHTML=`<img src="${esc(_me.avatar)}" alt="avatar">`}
+  else{av.textContent=(_me.nombre||'?')[0].toUpperCase()}
+  document.getElementById('perfil-nombre').textContent=`${_me.nombre||''}${_me.apellido?' '+_me.apellido:''}`;
+  document.getElementById('perfil-email').textContent=_me.email||(_me.telegram?'Cuenta Telegram':'Sin email');
+  document.getElementById('perfil-role').innerHTML=`<span class="rbadge r-${_me.rol}">${_me.rol}</span>`;
+  const el=document.getElementById('perfil-homes');
+  if(!_myHomes.length){el.innerHTML='<p style="color:var(--hint);font-size:13px">Sin viviendas asignadas</p>';return}
+  el.innerHTML=_myHomes.map(h=>`
+    <div class="card" style="margin-bottom:8px">
+      <div class="card-name">🏠 ${esc(h.nombre)}</div>
+      <div class="card-line"><span class="rbadge r-${h.mi_rol||'usuario'}">${h.mi_rol||'usuario'}</span></div>
+      ${(h.mi_rol==='moderador'||_me?.rol==='superadmin')
+        ?`<div class="card-actions"><button class="act-btn secondary" onclick="openPanelVivienda(${h.id},'${esc(h.nombre)}')">⚙️ Gestionar usuarios</button></div>`
+        :''}
+    </div>`).join('');
+}
+
+/* ══ ADMIN PANEL ════════════════════════════════════════════════════════════ */
+
+async function adminTab(tab){
+  document.getElementById('atab-usuarios').classList.toggle('active',tab==='usuarios');
+  document.getElementById('atab-viviendas').classList.toggle('active',tab==='viviendas');
+  const el=document.getElementById('admin-content');
+  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  if(tab==='usuarios'){
+    const usuarios=await api('/api/admin/usuarios');
+    if(!usuarios)return;
+    if(!usuarios.length){el.innerHTML='<div class="empty"><div class="ico">👥</div><p>Sin usuarios</p></div>';return}
+    el.innerHTML=usuarios.map(u=>`
+      <div class="user-row" id="urow-${u.id}">
+        <div class="user-av">${u.avatar?`<img src="${esc(u.avatar)}">`:(u.nombre[0]||'?').toUpperCase()}</div>
+        <div class="user-info">
+          <div class="user-name">${esc(u.nombre)}${u.apellido?' '+esc(u.apellido):''}</div>
+          <div class="user-meta">${u.email?esc(u.email):(u.telegram?'Telegram':'—')} · <span class="rbadge r-${u.rol}">${u.rol}</span></div>
+          <div class="user-meta">${u.activo?'<span class="s-activo">Activo</span>':'<span class="s-bloqueado">Bloqueado</span>'}</div>
+        </div>
+        <div class="user-acts">
+          <button class="act-btn secondary" onclick="adminEditUser(${u.id},'${u.rol}',${u.activo})">✏️</button>
+          ${u.id!==_me?.id?`<button class="act-btn danger" onclick="adminDelUser(${u.id})">🗑️</button>`:''}
+        </div>
+      </div>`).join('');
+  } else {
+    const viviendas=await api('/api/admin/viviendas');
+    if(!viviendas)return;
+    if(!viviendas.length){el.innerHTML='<div class="empty"><div class="ico">🏠</div><p>Sin viviendas</p></div>';return}
+    el.innerHTML=viviendas.map(v=>`
+      <div class="card" id="vrow-${v.id}">
+        <div class="card-name">🏠 ${esc(v.nombre)}</div>
+        <div class="card-line">${v.chat_id}</div>
+        <div class="card-line">${v.n_usuarios||0} usuario(s)</div>
+        <div class="card-actions">
+          <button class="act-btn secondary" onclick="openPanelVivienda(${v.id},'${esc(v.nombre)}')">⚙️ Gestionar</button>
+          <button class="act-btn danger" onclick="adminDelVivienda(${v.id},'${esc(v.nombre)}')">🗑️</button>
+        </div>
+      </div>`).join('');
+  }
+}
+
+async function adminEditUser(uid,currentRol,currentActivo){
+  tg.showPopup({title:'Editar usuario',message:'Seleccioná acción:',
+    buttons:[
+      {type:'default',text:'👑 superadmin',id:'superadmin'},
+      {type:'default',text:'🔧 moderador',id:'moderador'},
+      {type:'default',text:'👤 usuario',id:'usuario'},
+      {type:'default',text:currentActivo?'🚫 Desactivar':'✅ Activar',id:'toggle'},
+      {type:'cancel',text:'Cancelar'},
+    ]},async btn=>{
+    if(!btn||btn==='cancel')return;
+    if(btn==='toggle'){
+      await api(`/api/admin/usuarios/${uid}`,{method:'PUT',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({activo:currentActivo?0:1})});
+    } else {
+      await api(`/api/admin/usuarios/${uid}`,{method:'PUT',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({rol:btn})});
+    }
+    toast('✅ Usuario actualizado');adminTab('usuarios');
+  });
+}
+
+async function adminDelUser(uid){
+  tg.showConfirm('¿Eliminar este usuario permanentemente?',async ok=>{
+    if(!ok)return;
+    const r=await api(`/api/admin/usuarios/${uid}`,{method:'DELETE'});
+    if(r?.ok){document.getElementById('urow-'+uid)?.remove();toast('✅ Usuario eliminado')}
+  });
+}
+
+async function adminDelVivienda(vid,nombre){
+  tg.showConfirm(`¿Eliminar "${nombre}" y TODOS sus datos de inventario?`,async ok=>{
+    if(!ok)return;
+    const r2=await api(`/api/viviendas/${vid}`,{method:'DELETE'});
+    if(r2?.ok){document.getElementById('vrow-'+vid)?.remove();toast('✅ Vivienda eliminada')}
+  });
+}
+
+/* ══ PANEL VIVIENDA ═════════════════════════════════════════════════════════ */
+
+async function openPanelVivienda(vid,nombre){
+  _panelVid=vid;
+  document.getElementById('panel-vivienda-title').textContent=nombre;
+  document.getElementById('panel-vivienda').classList.add('open');
+  viviendaTab('usuarios');
+}
+function closePanelVivienda(){
+  document.getElementById('panel-vivienda').classList.remove('open');_panelVid=null;
+}
+
+async function viviendaTab(tab){
+  document.getElementById('vtab-usuarios').classList.toggle('active',tab==='usuarios');
+  document.getElementById('vtab-invitar').classList.toggle('active',tab==='invitar');
+  const el=document.getElementById('panel-vivienda-content');
+  el.innerHTML='<div class="empty"><div class="ico">⏳</div></div>';
+  if(tab==='usuarios'){
+    const users=await api(`/api/viviendas/${_panelVid}/usuarios`);
+    if(!users)return;
+    if(!users.length){el.innerHTML='<div class="empty"><div class="ico">👥</div><p>Sin usuarios</p></div>';return}
+    el.innerHTML=users.map(u=>`
+      <div class="user-row">
+        <div class="user-av">${u.avatar?`<img src="${esc(u.avatar)}">`:(u.nombre[0]||'?').toUpperCase()}</div>
+        <div class="user-info">
+          <div class="user-name">${esc(u.nombre)}</div>
+          <div class="user-meta"><span class="rbadge r-${u.rol}">${u.rol}</span> · <span class="s-${u.estado}">${u.estado}</span></div>
+        </div>
+        <div class="user-acts">
+          ${u.estado==='pendiente'?`<button class="act-btn" onclick="vSetEstado(${u.id},'activo')">✅</button>`:''}
+          ${u.estado==='activo'?`<button class="act-btn secondary" onclick="vSetEstado(${u.id},'bloqueado')">🚫</button>`:''}
+          <button class="act-btn danger" onclick="vRemoveUser(${u.id})">×</button>
+        </div>
+      </div>`).join('');
+  } else {
+    el.innerHTML=`
+      <p style="font-size:13px;color:var(--hint);margin-bottom:14px">Generá un link de invitación válido por 7 días.</p>
+      <div class="fg"><label class="fl">Rol del invitado</label>
+        <select class="fi" id="inv-rol" style="height:44px">
+          <option value="usuario">Usuario</option>
+          <option value="moderador">Moderador</option>
+        </select></div>
+      <button class="btn-p" onclick="generarInvite()">🔗 Generar link</button>
+      <div id="invite-result" style="margin-top:12px"></div>`;
+  }
+}
+
+async function vSetEstado(uid,estado){
+  await api(`/api/viviendas/${_panelVid}/usuarios/${uid}`,{method:'PUT',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({estado})});
+  toast(`✅ Estado: ${estado}`);viviendaTab('usuarios');
+}
+
+async function vRemoveUser(uid){
+  tg.showConfirm('¿Quitar a este usuario de la vivienda?',async ok=>{
+    if(!ok)return;
+    await api(`/api/viviendas/${_panelVid}/usuarios/${uid}`,{method:'DELETE'});
+    toast('✅ Usuario removido');viviendaTab('usuarios');
+  });
+}
+
+async function generarInvite(){
+  const rol=document.getElementById('inv-rol')?.value||'usuario';
+  const r=await api(`/api/viviendas/${_panelVid}/invitar`,{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({rol})});
+  if(r?.ok){
+    const el=document.getElementById('invite-result');
+    el.innerHTML=`<div class="invite-box">🔗 <span>${esc(r.link)}</span></div>
+      <button class="btn-p sec" style="margin-top:8px" onclick="navigator.clipboard?.writeText('${esc(r.link)}').then(()=>toast('✅ Link copiado')).catch(()=>toast('${esc(r.link)}'))">📋 Copiar link</button>`;
+  }
+}
+
+/* ══ ARRANQUE ════════════════════════════════════════════════════════════════ */
+(async function initApp(){
+  // 1. Telegram auto-auth
+  if(!_token&&init?.user?.id){
+    const r=await fetch(BASE+'/api/auth/telegram',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        telegram_id:init.user.id,
+        nombre:init.user.first_name||'Usuario',
+        chat_id:String(init?.chat?.id||init?.user?.id),
+      })}).then(r=>r.json()).catch(()=>null);
+    if(r?.ok){_token=r.token;localStorage.setItem('despensa_token',_token);_me=r.usuario}
+  }
+  // 2. Verify stored token
+  if(_token){
+    const me=await api('/api/me');
+    if(me){
+      _me=me.usuario;_myHomes=me.viviendas;
+      document.getElementById('btn-admin').style.display=_me.rol==='superadmin'?'':'none';
+      const invCode=new URLSearchParams(location.search).get('invite');
+      if(invCode){const r=await api(`/api/invitacion/${invCode}/usar`,{method:'POST'});if(r?.ok)toast(`✅ Te uniste a "${r.vivienda}"`)}
+      const last=JSON.parse(localStorage.getItem('despensa_last_home')||'null');
+      if(last&&_myHomes.find(h=>h.chat_id===last.chat_id)){selectHome(last.chat_id,last.nombre,last.vid);return}
+      if(_myHomes.length===1){selectHome(_myHomes[0].chat_id,_myHomes[0].nombre,_myHomes[0].id);return}
+      go('homes',loadHomes);return;
+    }
+    localStorage.removeItem('despensa_token');_token=null;
+  }
+  // 3. Show login
+  go('login');
+})();
+</script>
+</body>
+</html>
