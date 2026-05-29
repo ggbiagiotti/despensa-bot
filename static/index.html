@@ -278,6 +278,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   font-size:13px;font-weight:700;cursor:pointer}
 .inv-rm-btn{background:none;border:none;color:var(--hint);font-size:12px;
   cursor:pointer;padding:4px 0;margin-top:2px}
+
+/* ── SVG icon helpers ────────────────────────────────────────────────── */
+.ico-wrap svg{width:28px;height:28px;color:#fff}
+.home-icon svg{width:28px;height:28px;color:#fff}
+.login-hero .logo svg{width:56px;height:56px;color:#fff}
+.empty .ico{display:flex;justify-content:center}
+.empty .ico svg{width:44px;height:44px;color:var(--hint)}
+.compra-edit svg{width:18px;height:18px;vertical-align:middle}
+.act-btn svg{width:14px;height:14px;vertical-align:middle}
+.del-abs svg{width:14px;height:14px;vertical-align:middle}
+.invite-box svg{width:15px;height:15px;vertical-align:middle;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -285,7 +296,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <!-- ══ LOGIN ═════════════════════════════════════════════════════════════ -->
 <div id="view-login" class="view active">
   <div class="login-hero">
-    <div class="logo">🏠</div>
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
     <h1>Despensa</h1>
     <p>Gestioná la despensa familiar</p>
   </div>
@@ -333,13 +344,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <!-- ══ SELECTOR DE VIVIENDA ═══════════════════════════════════════════════ -->
 <div id="view-homes" class="view">
   <div class="hdr">
-    <h2>🏘️ Mis viviendas</h2>
-    <button class="act-btn" onclick="go('perfil',loadPerfil)">👤 Perfil</button>
+    <h2>Mis viviendas</h2>
+    <button class="act-btn" onclick="go('perfil',loadPerfil)">Perfil</button>
   </div>
   <div class="content">
     <div id="homes-list"></div>
     <button class="btn-p" style="margin-top:6px" onclick="showNewHomeModal()">+ Nueva vivienda</button>
-    <button class="btn-p sec" onclick="showJoinModal()">🔗 Unirse con invitación</button>
+    <button class="btn-p sec" onclick="showJoinModal()">Unirse con invitación</button>
   </div>
 </div>
 
@@ -385,7 +396,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <!-- ══ MODAL: nueva vivienda ══════════════════════════════════════════════ -->
 <div class="modal-bg" id="modal-new-home" onclick="closeModalNewHome(event)">
   <div class="modal">
-    <h3>🏡 Nueva vivienda</h3>
+    <h3>Nueva vivienda</h3>
     <p>Dale un nombre a tu casa o depto.</p>
     <div class="fg"><label class="fl">Nombre *</label>
       <input class="fi" id="nh-nombre" type="text" placeholder="Ej: Casa familiar"></div>
@@ -399,7 +410,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <!-- ══ MODAL: unirse con invitación ══════════════════════════════════════ -->
 <div class="modal-bg" id="modal-join" onclick="closeModalJoin(event)">
   <div class="modal">
-    <h3>🔗 Unirse con invitación</h3>
+    <h3>Unirse con invitación</h3>
     <p>Pegá el código o link de invitación.</p>
     <div class="fg"><label class="fl">Código de invitación</label>
       <input class="fi" id="join-token" type="text" placeholder="Código o URL completa"></div>
@@ -413,7 +424,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   <div class="dash-hdr">
     <div class="dash-hdr-top">
       <div>
-        <div class="dash-greeting">Bienvenido 👋</div>
+        <div class="dash-greeting">Bienvenido</div>
         <div class="dash-title" id="menu-home-name">Despensa</div>
         <div class="dash-sub" id="subtitle">Cargando…</div>
       </div>
@@ -423,31 +434,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   <div class="dash-body">
     <div class="grid">
       <button class="mbtn" onclick="go('list',loadList)">
-        <div class="ico-wrap">📋</div><span>Ver todo</span>
+        <div class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><span>Ver todo</span>
       </button>
       <button class="mbtn" onclick="go('add')">
-        <div class="ico-wrap">➕</div><span>Agregar</span>
+        <div class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><span>Agregar</span>
       </button>
       <button class="mbtn" onclick="go('expiring',loadExpiring)">
-        <div class="ico-wrap">⚠️</div><span>Por vencer</span>
+        <div class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><span>Por vencer</span>
       </button>
       <button class="mbtn" onclick="go('search')">
-        <div class="ico-wrap">🔍</div><span>Buscar</span>
+        <div class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><span>Buscar</span>
       </button>
       <button class="mbtn" onclick="go('compras',loadCompras)">
-        <div class="ico-wrap">🛒</div><span>Lista compras</span>
+        <div class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div><span>Lista compras</span>
       </button>
       <button class="mbtn" onclick="go('abiertos',loadAbiertos)">
-        <div class="ico-wrap">📂</div><span>Abiertos</span>
+        <div class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><span>Abiertos</span>
       </button>
       <button class="mbtn wide" onclick="go('delete',loadDeleteList)">
-        <div class="ico-wrap">🗑️</div><span>Eliminar</span>
+        <div class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></div><span>Eliminar</span>
       </button>
       <button class="mbtn" onclick="go('perfil',loadPerfil)">
-        <div class="ico-wrap">👤</div><span>Perfil</span>
+        <div class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><span>Perfil</span>
       </button>
       <button class="mbtn" id="btn-admin" style="display:none" onclick="go('admin',()=>adminTab('usuarios'))">
-        <div class="ico-wrap">⚙️</div><span>Admin</span>
+        <div class="ico-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></div><span>Admin</span>
       </button>
     </div>
   </div>
@@ -456,7 +467,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <!-- ══ VER TODO ══════════════════════════════════════════════════════════ -->
 <div id="view-list" class="view">
   <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Despensa completa</h2></div>
-  <div class="content" id="list-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
+  <div class="content" id="list-content"><div class="empty"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><p>Cargando…</p></div></div>
 </div>
 
 <!-- ══ AGREGAR ═══════════════════════════════════════════════════════════ -->
@@ -484,7 +495,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <!-- ══ POR VENCER ════════════════════════════════════════════════════════ -->
 <div id="view-expiring" class="view">
   <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Por vencer</h2></div>
-  <div class="content" id="expiring-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
+  <div class="content" id="expiring-content"><div class="empty"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><p>Cargando…</p></div></div>
 </div>
 
 <!-- ══ BUSCAR ════════════════════════════════════════════════════════════ -->
@@ -494,20 +505,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <input class="fi" id="search-q" placeholder="Nombre del producto…" type="text" oninput="doSearch(this.value)">
   </div>
   <div class="content" id="search-content">
-    <div class="empty"><div class="ico">🔍</div><p>Escribí para buscar</p></div>
+    <div class="empty"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><p>Escribí para buscar</p></div>
   </div>
 </div>
 
 <!-- ══ ABIERTOS ══════════════════════════════════════════════════════════ -->
 <div id="view-abiertos" class="view">
   <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Productos abiertos</h2></div>
-  <div class="content" id="abiertos-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
+  <div class="content" id="abiertos-content"><div class="empty"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><p>Cargando…</p></div></div>
 </div>
 
 <!-- ══ ELIMINAR ══════════════════════════════════════════════════════════ -->
 <div id="view-delete" class="view">
   <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Eliminar</h2></div>
-  <div class="content" id="delete-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
+  <div class="content" id="delete-content"><div class="empty"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><p>Cargando…</p></div></div>
 </div>
 
 <!-- ══ LISTA DE COMPRAS ══════════════════════════════════════════════════ -->
@@ -517,9 +528,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <h2>Lista de compras</h2>
     <button class="act-btn" onclick="go('add-compra')">+ Agregar</button>
   </div>
-  <div class="content" id="compras-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
+  <div class="content" id="compras-content"><div class="empty"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><p>Cargando…</p></div></div>
   <div class="action-bar" id="compras-bar" style="display:none">
-    <button class="btn-p" onclick="showInventariarModal()">🏪 Ingresar al inventario</button>
+    <button class="btn-p" onclick="showInventariarModal()">Ingresar al inventario</button>
   </div>
 </div>
 
@@ -547,13 +558,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <h3 id="modal-consumo-title">Abrir producto</h3>
     <p id="modal-consumo-sub">¿Cuánto queda en el paquete?</p>
     <div class="modal-opts">
-      <button class="opt-btn" onclick="applyConsumo('lleno')">🆕 Recién abierto</button>
+      <button class="opt-btn" onclick="applyConsumo('lleno')">Recién abierto</button>
       <button class="opt-btn" onclick="applyConsumo('3/4')">3/4</button>
       <button class="opt-btn" onclick="applyConsumo('1/2')">1/2</button>
       <button class="opt-btn" onclick="applyConsumo('1/4')">1/4</button>
     </div>
     <button class="opt-btn danger" style="width:100%;margin-bottom:6px;background:linear-gradient(135deg,#EF5350,#B71C1C);color:#fff;border-radius:var(--r);padding:15px" onclick="doVaciar()">
-      🗑️ Ya se terminó (vaciar)
+      Ya se terminó (vaciar)
     </button>
     <button class="modal-cancel" onclick="closeConsumoModal()">Cancelar</button>
   </div>
@@ -562,7 +573,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <!-- ══ MODAL: Inventariar ════════════════════════════════════════════════ -->
 <div class="modal-bg" id="modal-inv" onclick="closeInvModal(event)">
   <div class="modal" style="max-height:88vh;display:flex;flex-direction:column">
-    <h3>🏪 Ingresar al inventario</h3>
+    <h3>Ingresar al inventario</h3>
     <p>Ajustá unidades y fecha de vencimiento por producto.</p>
     <div id="inv-items" class="modal-scroll"></div>
     <button class="btn-p" onclick="doInventariar()">Ingresar todo</button>
@@ -573,7 +584,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <!-- ══ MODAL: Editar ítem de lista ═══════════════════════════════════════ -->
 <div class="modal-bg" id="modal-edit-compra" onclick="closeEditCompra(event)">
   <div class="modal" style="max-height:88vh;overflow-y:auto">
-    <h3>✏️ Editar producto</h3>
+    <h3>Editar producto</h3>
     <p>Modificá los datos del producto en la lista.</p>
     <input type="hidden" id="ec-id">
     <div class="fg"><label class="fl">Producto *</label>
@@ -604,6 +615,35 @@ tg.ready(); tg.expand();
 const init   = tg.initDataUnsafe || {};
 const BASE   = window.location.origin;
 
+/* ── SVG icon helper ──────────────────────────────────────────────────── */
+function icon(name,size=20){
+  const s=`width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`;
+  const p={
+    list:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>',
+    plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    alert:'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+    search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+    cart:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
+    folder:'<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+    trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>',
+    user:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    settings:'<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>',
+    home:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+    tag:'<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+    message:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    check:'<polyline points="20 6 9 17 4 12"/>',
+    x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+    link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+    clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    box:'<line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+    inbox:'<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+    edit:'<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>',
+    copy:'<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  };
+  return`<svg xmlns="http://www.w3.org/2000/svg" ${s}>${p[name]||''}</svg>`;
+}
+
 let _token    = localStorage.getItem('despensa_token') || null;
 let _me       = null;
 let _myHomes  = [];
@@ -633,7 +673,7 @@ function sem(fv){
 }
 
 function consumoEmoji(c){
-  return{lleno:'🆕 Recién abierto','3/4':'▓▓▓░ 3/4','1/2':'▓▓░░ 1/2','1/4':'▓░░░ 1/4'}[c]||c||'📂 Abierto';
+  return{lleno:'Recién abierto','3/4':'3/4','1/2':'1/2','1/4':'1/4'}[c]||c||'Abierto';
 }
 
 async function api(url,opts={}){
@@ -643,7 +683,7 @@ async function api(url,opts={}){
     if(r.status===401){doLogout();return null}
     return r.ok?r.json():null
   }
-  catch{toast('❌ Error de conexión');return null}
+  catch{toast('Error de conexión');return null}
 }
 
 /* ── Navigation ───────────────────────────────────────────────────────── */
@@ -679,7 +719,7 @@ function invCard(item, opts={}){
       </div>`;
     } else {
       actions=`<div class="card-actions">
-        <button class="act-btn" onclick="openConsumoModal(${item.id},'open','${esc(item.nombre)}')">📂 Abrir una unidad</button>
+        <button class="act-btn" onclick="openConsumoModal(${item.id},'open','${esc(item.nombre)}')">Abrir una unidad</button>
       </div>`;
     }
   }
@@ -687,13 +727,13 @@ function invCard(item, opts={}){
   return`<div class="card" id="card-${item.id}">
     ${delBtn}
     <div class="card-name">${esc(item.nombre)}</div>
-    ${item.marca?`<div class="card-marca">🏷️ ${esc(item.marca)}</div>`:''}
+    ${item.marca?`<div class="card-marca">${icon('tag',13)} ${esc(item.marca)}</div>`:''}
     ${item.cantidad?`<div class="card-line">Contenido: ${esc(item.cantidad)}</div>`:''}
     <div class="card-line">Compra: ${fmtF(item.fecha_compra)}</div>
     ${item.fecha_vence?`<div class="card-line">Vence: ${fmtF(item.fecha_vence)} ${badge}</div>`:''}
-    ${item.comentario?`<div class="card-line">💬 ${esc(item.comentario)}</div>`:''}
-    ${item.agregado_por?`<div class="card-line" style="font-size:11px;margin-top:3px">👤 ${esc(item.agregado_por)}</div>`:''}
-    <div style="margin-top:6px">${uniBadge}${item.abiertas?`<span class="badge bg-blue" style="margin-left:4px">📂 Abierto</span>`:''}</div>
+    ${item.comentario?`<div class="card-line">${icon('message',13)} ${esc(item.comentario)}</div>`:''}
+    ${item.agregado_por?`<div class="card-line" style="font-size:11px;margin-top:3px">${icon('user',12)} ${esc(item.agregado_por)}</div>`:''}
+    <div style="margin-top:6px">${uniBadge}${item.abiertas?`<span class="badge bg-blue" style="margin-left:4px">Abierto</span>`:''}</div>
     ${actions}${foto}
   </div>`;
 }
@@ -701,12 +741,12 @@ function invCard(item, opts={}){
 /* ══ LIST ═════════════════════════════════════════════════════════════════ */
 async function loadList(){
   const el=document.getElementById('list-content');
-  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  el.innerHTML=`<div class="empty"><div class="ico">${icon('clock',44)}</div><p>Cargando…</p></div>`;
   const items=await api(`/api/items?chat_id=${chatId}`);
   if(!items)return;
   document.getElementById('subtitle').textContent=items.length?`${items.length} productos`:'La despensa está vacía';
   el.innerHTML=items.length?items.map(i=>invCard(i,{withActions:true})).join('')
-    :'<div class="empty"><div class="ico">📭</div><p>La despensa está vacía</p></div>';
+    :`<div class="empty"><div class="ico">${icon('inbox',44)}</div><p>La despensa está vacía</p></div>`;
 }
 
 /* ══ ADD ══════════════════════════════════════════════════════════════════ */
@@ -726,66 +766,66 @@ async function submitAdd(){
     ['f-nombre','f-marca','f-cantidad','f-vence','f-comentario'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('f-unidades').value='1';
     document.getElementById('f-compra').valueAsDate=new Date();
-    toast(`✅ ${nombre} guardado`);go('menu');refreshSubtitle();loadSuggestions();
+    toast(`${nombre} guardado`);go('menu');refreshSubtitle();loadSuggestions();
   }
 }
 
 /* ══ EXPIRING ══════════════════════════════════════════════════════════════ */
 async function loadExpiring(){
   const el=document.getElementById('expiring-content');
-  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  el.innerHTML=`<div class="empty"><div class="ico">${icon('clock',44)}</div><p>Cargando…</p></div>`;
   const data=await api(`/api/expiring?chat_id=${chatId}`);
   if(!data)return;
   let html='';
   if(data.expired?.length){
-    html+=`<div class="stitle">🔴 Vencidos (${data.expired.length})</div>`;
+    html+=`<div class="stitle">Vencidos (${data.expired.length})</div>`;
     html+=data.expired.map(i=>invCard(i)).join('');
   }
   if(data.expiring?.length){
-    html+=`<div class="stitle">🟡 Vencen pronto (${data.expiring.length})</div>`;
+    html+=`<div class="stitle">Vencen pronto (${data.expiring.length})</div>`;
     html+=data.expiring.map(i=>invCard(i)).join('');
   }
-  el.innerHTML=html||'<div class="empty"><div class="ico">✅</div><p>Todo en orden</p></div>';
+  el.innerHTML=html||`<div class="empty"><div class="ico">${icon('check',44)}</div><p>Todo en orden</p></div>`;
 }
 
 /* ══ SEARCH ════════════════════════════════════════════════════════════════ */
 let st=null;
 async function doSearch(q){
   clearTimeout(st);const el=document.getElementById('search-content');
-  if(!q.trim()){el.innerHTML='<div class="empty"><div class="ico">🔍</div><p>Escribí para buscar</p></div>';return}
+  if(!q.trim()){el.innerHTML=`<div class="empty"><div class="ico">${icon('search',44)}</div><p>Escribí para buscar</p></div>`;return}
   st=setTimeout(async()=>{
     const items=await api(`/api/search?chat_id=${chatId}&q=${encodeURIComponent(q)}`);
     if(!items)return;
     el.innerHTML=items.length?items.map(i=>invCard(i,{withActions:true})).join('')
-      :'<div class="empty"><div class="ico">🔍</div><p>Sin resultados</p></div>';
+      :`<div class="empty"><div class="ico">${icon('search',44)}</div><p>Sin resultados</p></div>`;
   },400);
 }
 
 /* ══ ABIERTOS ══════════════════════════════════════════════════════════════ */
 async function loadAbiertos(){
   const el=document.getElementById('abiertos-content');
-  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  el.innerHTML=`<div class="empty"><div class="ico">${icon('clock',44)}</div><p>Cargando…</p></div>`;
   const items=await api(`/api/abiertos?chat_id=${chatId}`);
   if(!items)return;
-  if(!items.length){el.innerHTML='<div class="empty"><div class="ico">📦</div><p>No hay productos abiertos</p></div>';return}
+  if(!items.length){el.innerHTML=`<div class="empty"><div class="ico">${icon('box',44)}</div><p>No hay productos abiertos</p></div>`;return}
   el.innerHTML=items.map(i=>invCard(i,{withActions:true})).join('');
 }
 
 /* ══ DELETE ════════════════════════════════════════════════════════════════ */
 async function loadDeleteList(){
   const el=document.getElementById('delete-content');
-  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  el.innerHTML=`<div class="empty"><div class="ico">${icon('clock',44)}</div><p>Cargando…</p></div>`;
   const items=await api(`/api/items?chat_id=${chatId}`);
   if(!items)return;
   el.innerHTML=items.length?items.map(i=>invCard(i,{withDelete:true})).join('')
-    :'<div class="empty"><div class="ico">📭</div><p>La despensa está vacía</p></div>';
+    :`<div class="empty"><div class="ico">${icon('inbox',44)}</div><p>La despensa está vacía</p></div>`;
 }
 
 async function deleteItem(id){
   tg.showConfirm('¿Eliminar este producto del inventario?',async ok=>{
     if(!ok)return;
     const r=await api(`/api/items/${id}?chat_id=${chatId}`,{method:'DELETE'});
-    if(r){document.getElementById('card-'+id)?.remove();toast('✅ Eliminado');refreshSubtitle()}
+    if(r){document.getElementById('card-'+id)?.remove();toast('Eliminado');refreshSubtitle()}
   });
 }
 
@@ -795,12 +835,12 @@ let _comprasData=[];
 async function loadCompras(){
   const el=document.getElementById('compras-content');
   const bar=document.getElementById('compras-bar');
-  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  el.innerHTML=`<div class="empty"><div class="ico">${icon('clock',44)}</div><p>Cargando…</p></div>`;
   const items=await api(`/api/compras?chat_id=${chatId}`);
   if(!items)return;
   _comprasData=items;
   if(!items.length){
-    el.innerHTML='<div class="empty"><div class="ico">🛒</div><p>Lista vacía — tocá "+ Agregar"</p></div>';
+    el.innerHTML=`<div class="empty"><div class="ico">${icon('cart',44)}</div><p>Lista vacía — tocá "+ Agregar"</p></div>`;
     bar.style.display='none';return;
   }
   const comprados=items.filter(i=>i.comprado).length;
@@ -809,7 +849,7 @@ async function loadCompras(){
 }
 
 function compraRow(item){
-  const cantReal=item.cant_real?`<div class="compra-real">✏️ Compré: ${esc(item.cant_real)}</div>`:'';
+  const cantReal=item.cant_real?`<div class="compra-real">Compré: ${esc(item.cant_real)}</div>`:'';
   const uniStr=item.unidades>1?`${item.unidades} uds.`:null;
   const sub=[item.marca,uniStr,item.cantidad].filter(Boolean).join(' · ');
   const cantEditBtn=item.comprado&&!item.cant_real
@@ -822,10 +862,10 @@ function compraRow(item){
     <div class="compra-info">
       <div class="compra-name">${esc(item.nombre)}</div>
       ${sub?`<div class="compra-sub">${esc(sub)}</div>`:''}
-      ${item.comentario?`<div class="compra-sub">💬 ${esc(item.comentario)}</div>`:''}
+      ${item.comentario?`<div class="compra-sub">${esc(item.comentario)}</div>`:''}
       ${cantReal}${cantEditBtn}
     </div>
-    <button class="compra-edit" onclick="openEditCompra(${item.id})" title="Editar">✏️</button>
+    <button class="compra-edit" onclick="openEditCompra(${item.id})" title="Editar">${icon('edit',18)}</button>
     <button class="compra-del" onclick="deleteCompra(${item.id})">×</button>
   </div>`;
 }
@@ -867,7 +907,7 @@ async function submitCompra(){
   if(ok){
     ['lc-nombre','lc-marca','lc-cantidad','lc-comentario'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('lc-unidades').value='1';
-    toast(`✅ ${nombre} agregado a la lista`);go('compras',loadCompras);loadSuggestions();
+    toast(`${nombre} agregado a la lista`);go('compras',loadCompras);loadSuggestions();
   }
 }
 
@@ -925,7 +965,7 @@ async function doInventariar(){
     body:JSON.stringify({chat_id:chatId,items,usuario:init?.user?.first_name||'App'})});
   if(r&&r.ok){
     document.getElementById('modal-inv').classList.remove('open');
-    toast(`✅ ${r.agregados.length} producto(s) al inventario`);
+    toast(`${r.agregados.length} producto(s) al inventario`);
     loadCompras();refreshSubtitle();
   }
 }
@@ -961,7 +1001,7 @@ async function submitEditCompra(){
   };
   const ok=await api(`/api/compras/${id}`,{method:'PUT',
     headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(ok){closeEditCompra();toast('✅ Producto actualizado');loadCompras()}
+  if(ok){closeEditCompra();toast('Producto actualizado');loadCompras()}
 }
 
 /* ══ CONSUMO MODAL ═════════════════════════════════════════════════════════ */
@@ -989,12 +1029,12 @@ async function applyConsumo(consumo){
     const r=await api(`/api/items/${_modalItemId}/abrir`,{method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({chat_id:chatId,consumo})});
-    if(r){toast(`📂 Producto abierto (${consumoEmoji(consumo)})`);reloadCurrentView()}
+    if(r){toast(`Producto abierto (${consumoEmoji(consumo)})`);reloadCurrentView()}
   } else {
     const r=await api(`/api/items/${_modalItemId}/consumo`,{method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({chat_id:chatId,consumo})});
-    if(r){toast(`✅ Consumo actualizado`);reloadCurrentView()}
+    if(r){toast('Consumo actualizado');reloadCurrentView()}
   }
 }
 
@@ -1006,8 +1046,8 @@ async function doVaciar(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({chat_id:chatId})});
     if(r){
-      if(r.result==='deleted')toast('🗑️ Último paquete consumido — eliminado del inventario');
-      else toast('✅ Paquete vacío — quedan más en stock');
+      if(r.result==='deleted')toast('Último paquete consumido — eliminado del inventario');
+      else toast('Paquete vacío — quedan más en stock');
       reloadCurrentView();refreshSubtitle();
     }
   });
@@ -1056,7 +1096,7 @@ async function doRegister(){
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({nombre,email,password:pass})}).then(r=>r.json()).catch(()=>null);
   if(r?.ok){_token=r.token;localStorage.setItem('despensa_token',_token);_me=r.usuario;postLogin()}
-  else toast('❌ '+(r?.error||'Error al registrarse'));
+  else toast(r?.error||'Error al registrarse');
 }
 
 async function doLogin(){
@@ -1067,7 +1107,7 @@ async function doLogin(){
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({email,password:pass})}).then(r=>r.json()).catch(()=>null);
   if(r?.ok){_token=r.token;localStorage.setItem('despensa_token',_token);_me=r.usuario;postLogin()}
-  else toast('❌ '+(r?.error||'Email o contraseña incorrectos'));
+  else toast(r?.error||'Email o contraseña incorrectos');
 }
 
 /* ── Google Sign-In ──────────────────────────────────────────────────── */
@@ -1098,7 +1138,7 @@ async function handleGoogleToken(response){
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({credential:response.credential})}).then(r=>r.json()).catch(()=>null);
   if(r?.ok){_token=r.token;localStorage.setItem('despensa_token',_token);_me=r.usuario;postLogin()}
-  else toast('❌ '+(r?.error||'Error con Google'));
+  else toast(r?.error||'Error con Google');
 }
 
 /* ── Post-login ──────────────────────────────────────────────────────── */
@@ -1106,8 +1146,8 @@ async function postLogin(){
   const invCode=new URLSearchParams(location.search).get('invite');
   if(invCode){
     const r=await api(`/api/invitacion/${invCode}/usar`,{method:'POST'});
-    if(r?.ok)toast(`✅ Te uniste a "${r.vivienda}"`);
-    else toast('⚠️ '+(r?.error||'Invitación inválida'));
+    if(r?.ok)toast(`Te uniste a "${r.vivienda}"`);
+    else toast(r?.error||'Invitación inválida');
   }
   const me=await api('/api/me');
   if(!me){doLogout();return}
@@ -1142,17 +1182,17 @@ function doLogout(){
 
 async function loadHomes(){
   const el=document.getElementById('homes-list');
-  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  el.innerHTML=`<div class="empty"><div class="ico">${icon('clock',44)}</div><p>Cargando…</p></div>`;
   const homes=await api('/api/viviendas');
   if(!homes)return;
   _myHomes=homes;
   if(!homes.length){
-    el.innerHTML='<div class="empty"><div class="ico">🏠</div><p>No tenés viviendas aún.<br>Creá una o usá un link de invitación.</p></div>';
+    el.innerHTML=`<div class="empty"><div class="ico">${icon('home',44)}</div><p>No tenés viviendas aún.<br>Creá una o usá un link de invitación.</p></div>`;
     return;
   }
   el.innerHTML=homes.map(h=>`
     <div class="home-card" onclick="selectHome('${esc(h.chat_id)}','${esc(h.nombre)}',${h.id})">
-      <div class="home-icon">🏠</div>
+      <div class="home-icon">${icon('home',28)}</div>
       <div class="home-info">
         <div class="home-name">${esc(h.nombre)}</div>
         <div class="home-sub">${h.n_usuarios!=null?`${h.n_usuarios} usuario(s)`:''}</div>
@@ -1175,7 +1215,7 @@ async function doCreateHome(){
   if(r?.ok){
     closeModalNewHome();
     document.getElementById('nh-nombre').value='';document.getElementById('nh-desc').value='';
-    toast('✅ Vivienda creada');selectHome(r.chat_id,nombre,r.id);
+    toast('Vivienda creada');selectHome(r.chat_id,nombre,r.id);
   }
 }
 
@@ -1189,10 +1229,10 @@ async function doJoin(){
   const r=await api(`/api/invitacion/${val}/usar`,{method:'POST'});
   if(r?.ok){
     closeModalJoin();document.getElementById('join-token').value='';
-    toast(`✅ Te uniste a "${r.vivienda}"`);
+    toast(`Te uniste a "${r.vivienda}"`);
     const me=await api('/api/me');if(me){_myHomes=me.viviendas;}
     loadHomes();
-  } else toast('❌ '+(r?.error||'Invitación inválida'));
+  } else toast(r?.error||'Invitación inválida');
 }
 
 /* ══ PERFIL ══════════════════════════════════════════════════════════════════ */
@@ -1210,10 +1250,10 @@ function loadPerfil(){
   if(!_myHomes.length){el.innerHTML='<p style="color:var(--hint);font-size:13px">Sin viviendas asignadas</p>';return}
   el.innerHTML=_myHomes.map(h=>`
     <div class="card" style="margin-bottom:10px">
-      <div class="card-name">🏠 ${esc(h.nombre)}</div>
+      <div class="card-name">${icon('home',14)} ${esc(h.nombre)}</div>
       <div class="card-line"><span class="rbadge r-${h.mi_rol||'usuario'}">${h.mi_rol||'usuario'}</span></div>
       ${(h.mi_rol==='moderador'||_me?.rol==='superadmin')
-        ?`<div class="card-actions"><button class="act-btn secondary" onclick="openPanelVivienda(${h.id},'${esc(h.nombre)}')">⚙️ Gestionar usuarios</button></div>`
+        ?`<div class="card-actions"><button class="act-btn secondary" onclick="openPanelVivienda(${h.id},'${esc(h.nombre)}')">Gestionar usuarios</button></div>`
         :''}
     </div>`).join('');
 }
@@ -1224,11 +1264,11 @@ async function adminTab(tab){
   document.getElementById('atab-usuarios').classList.toggle('active',tab==='usuarios');
   document.getElementById('atab-viviendas').classList.toggle('active',tab==='viviendas');
   const el=document.getElementById('admin-content');
-  el.innerHTML='<div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div>';
+  el.innerHTML=`<div class="empty"><div class="ico">${icon('clock',44)}</div><p>Cargando…</p></div>`;
   if(tab==='usuarios'){
     const usuarios=await api('/api/admin/usuarios');
     if(!usuarios)return;
-    if(!usuarios.length){el.innerHTML='<div class="empty"><div class="ico">👥</div><p>Sin usuarios</p></div>';return}
+    if(!usuarios.length){el.innerHTML=`<div class="empty"><div class="ico">${icon('users',44)}</div><p>Sin usuarios</p></div>`;return}
     el.innerHTML=usuarios.map(u=>`
       <div class="user-row" id="urow-${u.id}">
         <div class="user-av">${u.avatar?`<img src="${esc(u.avatar)}">`:(u.nombre[0]||'?').toUpperCase()}</div>
@@ -1238,22 +1278,22 @@ async function adminTab(tab){
           <div class="user-meta">${u.activo?'<span class="s-activo">Activo</span>':'<span class="s-bloqueado">Bloqueado</span>'}</div>
         </div>
         <div class="user-acts">
-          <button class="act-btn secondary" onclick="adminEditUser(${u.id},'${u.rol}',${u.activo})">✏️</button>
-          ${u.id!==_me?.id?`<button class="act-btn danger" onclick="adminDelUser(${u.id})">🗑️</button>`:''}
+          <button class="act-btn secondary" onclick="adminEditUser(${u.id},'${u.rol}',${u.activo})">${icon('edit',14)}</button>
+          ${u.id!==_me?.id?`<button class="act-btn danger" onclick="adminDelUser(${u.id})">${icon('trash',14)}</button>`:''}
         </div>
       </div>`).join('');
   } else {
     const viviendas=await api('/api/admin/viviendas');
     if(!viviendas)return;
-    if(!viviendas.length){el.innerHTML='<div class="empty"><div class="ico">🏠</div><p>Sin viviendas</p></div>';return}
+    if(!viviendas.length){el.innerHTML=`<div class="empty"><div class="ico">${icon('home',44)}</div><p>Sin viviendas</p></div>`;return}
     el.innerHTML=viviendas.map(v=>`
       <div class="card" id="vrow-${v.id}">
-        <div class="card-name">🏠 ${esc(v.nombre)}</div>
+        <div class="card-name">${icon('home',14)} ${esc(v.nombre)}</div>
         <div class="card-line">${v.chat_id}</div>
         <div class="card-line">${v.n_usuarios||0} usuario(s)</div>
         <div class="card-actions">
-          <button class="act-btn secondary" onclick="openPanelVivienda(${v.id},'${esc(v.nombre)}')">⚙️ Gestionar</button>
-          <button class="act-btn danger" onclick="adminDelVivienda(${v.id},'${esc(v.nombre)}')">🗑️</button>
+          <button class="act-btn secondary" onclick="openPanelVivienda(${v.id},'${esc(v.nombre)}')">Gestionar</button>
+          <button class="act-btn danger" onclick="adminDelVivienda(${v.id},'${esc(v.nombre)}')">${icon('trash',14)}</button>
         </div>
       </div>`).join('');
   }
@@ -1262,10 +1302,10 @@ async function adminTab(tab){
 async function adminEditUser(uid,currentRol,currentActivo){
   tg.showPopup({title:'Editar usuario',message:'Seleccioná acción:',
     buttons:[
-      {type:'default',text:'👑 superadmin',id:'superadmin'},
-      {type:'default',text:'🔧 moderador',id:'moderador'},
-      {type:'default',text:'👤 usuario',id:'usuario'},
-      {type:'default',text:currentActivo?'🚫 Desactivar':'✅ Activar',id:'toggle'},
+      {type:'default',text:'superadmin',id:'superadmin'},
+      {type:'default',text:'moderador',id:'moderador'},
+      {type:'default',text:'usuario',id:'usuario'},
+      {type:'default',text:currentActivo?'Desactivar':'Activar',id:'toggle'},
       {type:'cancel',text:'Cancelar'},
     ]},async btn=>{
     if(!btn||btn==='cancel')return;
@@ -1276,7 +1316,7 @@ async function adminEditUser(uid,currentRol,currentActivo){
       await api(`/api/admin/usuarios/${uid}`,{method:'PUT',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({rol:btn})});
     }
-    toast('✅ Usuario actualizado');adminTab('usuarios');
+    toast('Usuario actualizado');adminTab('usuarios');
   });
 }
 
@@ -1284,7 +1324,7 @@ async function adminDelUser(uid){
   tg.showConfirm('¿Eliminar este usuario permanentemente?',async ok=>{
     if(!ok)return;
     const r=await api(`/api/admin/usuarios/${uid}`,{method:'DELETE'});
-    if(r?.ok){document.getElementById('urow-'+uid)?.remove();toast('✅ Usuario eliminado')}
+    if(r?.ok){document.getElementById('urow-'+uid)?.remove();toast('Usuario eliminado')}
   });
 }
 
@@ -1292,7 +1332,7 @@ async function adminDelVivienda(vid,nombre){
   tg.showConfirm(`¿Eliminar "${nombre}" y TODOS sus datos de inventario?`,async ok=>{
     if(!ok)return;
     const r2=await api(`/api/viviendas/${vid}`,{method:'DELETE'});
-    if(r2?.ok){document.getElementById('vrow-'+vid)?.remove();toast('✅ Vivienda eliminada')}
+    if(r2?.ok){document.getElementById('vrow-'+vid)?.remove();toast('Vivienda eliminada')}
   });
 }
 
@@ -1312,11 +1352,11 @@ async function viviendaTab(tab){
   document.getElementById('vtab-usuarios').classList.toggle('active',tab==='usuarios');
   document.getElementById('vtab-invitar').classList.toggle('active',tab==='invitar');
   const el=document.getElementById('panel-vivienda-content');
-  el.innerHTML='<div class="empty"><div class="ico">⏳</div></div>';
+  el.innerHTML=`<div class="empty"><div class="ico">${icon('clock',44)}</div></div>`;
   if(tab==='usuarios'){
     const users=await api(`/api/viviendas/${_panelVid}/usuarios`);
     if(!users)return;
-    if(!users.length){el.innerHTML='<div class="empty"><div class="ico">👥</div><p>Sin usuarios</p></div>';return}
+    if(!users.length){el.innerHTML=`<div class="empty"><div class="ico">${icon('users',44)}</div><p>Sin usuarios</p></div>`;return}
     el.innerHTML=users.map(u=>`
       <div class="user-row">
         <div class="user-av">${u.avatar?`<img src="${esc(u.avatar)}">`:(u.nombre[0]||'?').toUpperCase()}</div>
@@ -1325,8 +1365,8 @@ async function viviendaTab(tab){
           <div class="user-meta"><span class="rbadge r-${u.rol}">${u.rol}</span> · <span class="s-${u.estado}">${u.estado}</span></div>
         </div>
         <div class="user-acts">
-          ${u.estado==='pendiente'?`<button class="act-btn" onclick="vSetEstado(${u.id},'activo')">✅</button>`:''}
-          ${u.estado==='activo'?`<button class="act-btn secondary" onclick="vSetEstado(${u.id},'bloqueado')">🚫</button>`:''}
+          ${u.estado==='pendiente'?`<button class="act-btn" onclick="vSetEstado(${u.id},'activo')">Aprobar</button>`:''}
+          ${u.estado==='activo'?`<button class="act-btn secondary" onclick="vSetEstado(${u.id},'bloqueado')">Bloquear</button>`:''}
           <button class="act-btn danger" onclick="vRemoveUser(${u.id})">×</button>
         </div>
       </div>`).join('');
@@ -1338,7 +1378,7 @@ async function viviendaTab(tab){
           <option value="usuario">Usuario</option>
           <option value="moderador">Moderador</option>
         </select></div>
-      <button class="btn-p" onclick="generarInvite()">🔗 Generar link</button>
+      <button class="btn-p" onclick="generarInvite()">Generar link de invitación</button>
       <div id="invite-result" style="margin-top:14px"></div>`;
   }
 }
@@ -1346,14 +1386,14 @@ async function viviendaTab(tab){
 async function vSetEstado(uid,estado){
   await api(`/api/viviendas/${_panelVid}/usuarios/${uid}`,{method:'PUT',
     headers:{'Content-Type':'application/json'},body:JSON.stringify({estado})});
-  toast(`✅ Estado: ${estado}`);viviendaTab('usuarios');
+  toast(`Estado: ${estado}`);viviendaTab('usuarios');
 }
 
 async function vRemoveUser(uid){
   tg.showConfirm('¿Quitar a este usuario de la vivienda?',async ok=>{
     if(!ok)return;
     await api(`/api/viviendas/${_panelVid}/usuarios/${uid}`,{method:'DELETE'});
-    toast('✅ Usuario removido');viviendaTab('usuarios');
+    toast('Usuario removido');viviendaTab('usuarios');
   });
 }
 
@@ -1363,8 +1403,8 @@ async function generarInvite(){
     headers:{'Content-Type':'application/json'},body:JSON.stringify({rol})});
   if(r?.ok){
     const el=document.getElementById('invite-result');
-    el.innerHTML=`<div class="invite-box">🔗 <span>${esc(r.link)}</span></div>
-      <button class="btn-p sec" style="margin-top:10px" onclick="navigator.clipboard?.writeText('${esc(r.link)}').then(()=>toast('✅ Link copiado')).catch(()=>toast('${esc(r.link)}'))">📋 Copiar link</button>`;
+    el.innerHTML=`<div class="invite-box">${icon('link',15)} <span>${esc(r.link)}</span></div>
+      <button class="btn-p sec" style="margin-top:10px" onclick="navigator.clipboard?.writeText('${esc(r.link)}').then(()=>toast('Link copiado')).catch(()=>toast('${esc(r.link)}')); return false">${icon('copy',15)} Copiar link</button>`;
   }
 }
 
@@ -1388,7 +1428,7 @@ async function generarInvite(){
       _me=me.usuario;_myHomes=me.viviendas;
       document.getElementById('btn-admin').style.display=_me.rol==='superadmin'?'':'none';
       const invCode=new URLSearchParams(location.search).get('invite');
-      if(invCode){const r=await api(`/api/invitacion/${invCode}/usar`,{method:'POST'});if(r?.ok)toast(`✅ Te uniste a "${r.vivienda}"`)}
+      if(invCode){const r=await api(`/api/invitacion/${invCode}/usar`,{method:'POST'});if(r?.ok)toast(`Te uniste a "${r.vivienda}"`)}
       const last=JSON.parse(localStorage.getItem('despensa_last_home')||'null');
       if(last&&_myHomes.find(h=>h.chat_id===last.chat_id)){selectHome(last.chat_id,last.nombre,last.vid);return}
       if(_myHomes.length===1){selectHome(_myHomes[0].chat_id,_myHomes[0].nombre,_myHomes[0].id);return}
