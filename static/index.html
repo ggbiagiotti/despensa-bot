@@ -6,14 +6,24 @@
 <title>Despensa</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
+/* ── Paleta: Madera Paraíso ──────────────────────────────────────────── */
 :root {
-  --bg:      var(--tg-theme-bg-color,#fff);
-  --text:    var(--tg-theme-text-color,#000);
-  --hint:    var(--tg-theme-hint-color,#999);
-  --link:    var(--tg-theme-link-color,#2481cc);
-  --btn:     var(--tg-theme-button-color,#2481cc);
-  --btn-txt: var(--tg-theme-button-text-color,#fff);
-  --sec:     var(--tg-theme-secondary-bg-color,#f1f1f1);
+  --bg:      #FEF7EE;
+  --card:    #FFFFFF;
+  --text:    #2C1810;
+  --hint:    #A08060;
+  --border:  #EAD9C8;
+  --sec:     #F5EBE0;
+  --btn:     #C8773A;
+  --btn-txt: #FFFFFF;
+  --g1:      #D4935A;
+  --g2:      #9B4F1E;
+  --grad:    linear-gradient(135deg, #D4935A 0%, #9B4F1E 100%);
+  --shd:     0 4px 24px rgba(155,79,30,.13);
+  --shd-sm:  0 2px 12px rgba(155,79,30,.09);
+  --r:       20px;
+  --r-sm:    12px;
+  --r-pill:  50px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
@@ -21,205 +31,253 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .view{display:none;min-height:100vh;flex-direction:column}
 .view.active{display:flex}
 
-/* Header */
-.hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;
-  background:var(--sec);position:sticky;top:0;z-index:10;
-  border-bottom:1px solid rgba(0,0,0,.07)}
-.hdr h2{font-size:17px;font-weight:600;flex:1}
-.back{background:none;border:none;font-size:28px;line-height:1;
-  cursor:pointer;color:var(--link);padding:0 4px}
+/* ── Header gradient ─────────────────────────────────────────────────── */
+.hdr{display:flex;align-items:center;gap:10px;padding:14px 18px;
+  background:var(--grad);position:sticky;top:0;z-index:10}
+.hdr h2{font-size:17px;font-weight:700;flex:1;color:#fff}
+.back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.22);
+  border:none;font-size:20px;line-height:1;cursor:pointer;color:#fff;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr .act-btn{background:rgba(255,255,255,.22);color:#fff;
+  border:1.5px solid rgba(255,255,255,.35);border-radius:var(--r-pill);
+  padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer}
 
-/* Menu */
-.menu-top{padding:24px 16px 14px;text-align:center}
-.menu-top .logo{font-size:48px}
-.menu-top h1{font-size:24px;font-weight:700;margin:6px 0 4px}
-.menu-top p{font-size:13px;color:var(--hint)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 20px}
-.mbtn{background:var(--sec);border:none;border-radius:16px;padding:18px 10px;
-  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;
-  font-size:13px;font-weight:500;color:var(--text);transition:transform .1s}
-.mbtn:active{transform:scale(.95)}
-.mbtn .ico{font-size:30px}
+/* ── Dashboard header ────────────────────────────────────────────────── */
+.dash-hdr{background:var(--grad);padding:36px 20px 58px}
+.dash-hdr-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.dash-greeting{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:3px}
+.dash-title{color:#fff;font-size:26px;font-weight:800;line-height:1.2}
+.dash-sub{color:rgba(255,255,255,.75);font-size:13px;margin-top:4px}
+.dash-av{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.28);
+  border:2.5px solid rgba(255,255,255,.55);color:#fff;font-size:18px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex-shrink:0}
+.dash-av img{width:100%;height:100%;object-fit:cover}
+.dash-body{background:var(--bg);border-radius:28px 28px 0 0;margin-top:-28px;
+  padding:22px 16px 28px;flex:1;overflow-y:auto}
+
+/* ── Grid ────────────────────────────────────────────────────────────── */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-bottom:8px}
+.mbtn{background:var(--card);border:none;border-radius:var(--r);padding:20px 12px 18px;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;
+  font-size:13px;font-weight:600;color:var(--text);box-shadow:var(--shd);
+  transition:transform .15s,box-shadow .15s}
+.mbtn:active{transform:scale(.96);box-shadow:var(--shd-sm)}
+.mbtn .ico-wrap{width:52px;height:52px;border-radius:16px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 4px 12px rgba(155,79,30,.3)}
 .mbtn.wide{grid-column:1/-1}
 
-/* Content */
-.content{flex:1;padding:14px 16px;overflow-y:auto}
+/* ── Content ─────────────────────────────────────────────────────────── */
+.content{flex:1;padding:16px;overflow-y:auto;background:var(--bg)}
 
-/* Cards */
-.card{background:var(--sec);border-radius:14px;padding:14px;margin-bottom:10px;position:relative}
-.card-name{font-size:16px;font-weight:600}
-.card-marca{font-size:13px;color:var(--hint);margin-top:2px}
-.card-line{font-size:13px;color:var(--hint);margin-top:3px}
-.card-img{width:100%;border-radius:10px;margin-top:10px;max-height:180px;object-fit:cover}
+/* ── Cards ───────────────────────────────────────────────────────────── */
+.card{background:var(--card);border-radius:var(--r);padding:18px;
+  margin-bottom:12px;position:relative;box-shadow:var(--shd)}
+.card-name{font-size:16px;font-weight:700}
+.card-marca{font-size:13px;color:var(--hint);margin-top:3px}
+.card-line{font-size:13px;color:var(--hint);margin-top:4px}
+.card-img{width:100%;border-radius:var(--r-sm);margin-top:12px;max-height:180px;object-fit:cover}
 
-/* Badges */
-.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;margin-top:5px}
-.bg-green{background:#d4edda;color:#155724}
-.bg-yellow{background:#fff3cd;color:#7d5800}
-.bg-orange{background:#ffe5cc;color:#7d3200}
-.bg-red{background:#f8d7da;color:#721c24}
-.bg-blue{background:#cce5ff;color:#004085}
-.bg-gray{background:#e2e3e5;color:#383d41}
+/* ── Badges ──────────────────────────────────────────────────────────── */
+.badge{display:inline-block;padding:3px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:700;margin-top:5px}
+.bg-green {background:#E8F5E9;color:#2E7D32}
+.bg-yellow{background:#FFF8E1;color:#E65100}
+.bg-orange{background:#FBE9E7;color:#BF360C}
+.bg-red   {background:#FFEBEE;color:#B71C1C}
+.bg-blue  {background:#FFF3E0;color:#E65100}
+.bg-gray  {background:#F5F5F5;color:#616161}
 
-/* Buttons in cards */
-.card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.act-btn{background:var(--btn);color:var(--btn-txt);border:none;border-radius:8px;
-  padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer}
-.act-btn.danger{background:#ff3b30}
-.act-btn.secondary{background:var(--sec);color:var(--text);
-  border:1px solid rgba(0,0,0,.12)}
-.del-abs{position:absolute;top:12px;right:12px;background:#ff3b30;color:#fff;
-  border:none;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer}
+/* ── Card actions ────────────────────────────────────────────────────── */
+.card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.act-btn{background:var(--grad);color:#fff;border:none;border-radius:var(--r-pill);
+  padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer}
+.act-btn.danger{background:linear-gradient(135deg,#EF5350,#B71C1C)}
+.act-btn.secondary{background:var(--card);color:var(--text);
+  border:1.5px solid var(--border);box-shadow:var(--shd-sm)}
+.del-abs{position:absolute;top:14px;right:14px;
+  background:linear-gradient(135deg,#EF5350,#B71C1C);color:#fff;
+  border:none;border-radius:var(--r-pill);padding:7px 14px;font-size:12px;cursor:pointer}
 
-/* Compras - checkbox row */
+/* ── Compras ─────────────────────────────────────────────────────────── */
 .compra-row{display:flex;align-items:flex-start;gap:12px;
-  background:var(--sec);border-radius:14px;padding:14px;margin-bottom:8px}
-.compra-row.bought{opacity:.55}
-.chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--hint);
+  background:var(--card);border-radius:var(--r);padding:16px;
+  margin-bottom:10px;box-shadow:var(--shd-sm)}
+.compra-row.bought{opacity:.58}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);
   flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:14px;margin-top:1px;transition:all .15s}
-.chk.checked{background:var(--btn);border-color:var(--btn);color:#fff}
+  font-size:14px;margin-top:1px;transition:all .18s;background:var(--bg)}
+.chk.checked{background:var(--grad);border-color:var(--g1);color:#fff}
 .compra-info{flex:1;min-width:0}
-.compra-name{font-size:15px;font-weight:600}
+.compra-name{font-size:15px;font-weight:700}
 .compra-sub{font-size:13px;color:var(--hint);margin-top:2px}
-.compra-real{font-size:12px;color:var(--btn);margin-top:3px;font-weight:500}
-.compra-del{background:none;border:none;color:var(--hint);font-size:20px;
-  cursor:pointer;flex-shrink:0;padding:0 4px}
+.compra-real{font-size:12px;color:var(--btn);margin-top:3px;font-weight:600}
+.compra-del{background:none;border:none;color:var(--hint);font-size:22px;cursor:pointer;flex-shrink:0;padding:0 2px}
 
-/* Bottom action bar */
-.action-bar{padding:12px 16px;background:var(--sec);
-  border-top:1px solid rgba(0,0,0,.07)}
+/* ── Action bar ──────────────────────────────────────────────────────── */
+.action-bar{padding:14px 16px 22px;background:var(--card);border-top:1px solid var(--border)}
 
-/* Form */
-.fg{margin-bottom:14px}
-.fl{display:block;font-size:11px;font-weight:600;color:var(--hint);
-  text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-.fi{width:100%;padding:12px;border-radius:12px;border:none;
-  background:var(--sec);font-size:16px;color:var(--text);outline:none}
-.fi:focus{box-shadow:0 0 0 2px var(--btn)}
-.btn-p{width:100%;padding:14px;background:var(--btn);color:var(--btn-txt);
-  border:none;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;margin-top:6px}
-.btn-p:active{opacity:.85}
-.btn-p.sec{background:var(--sec);color:var(--text);border:1px solid rgba(0,0,0,.12);margin-top:8px}
+/* ── Forms ───────────────────────────────────────────────────────────── */
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--hint);
+  text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.fi{width:100%;padding:14px 16px;border-radius:var(--r-sm);
+  border:1.5px solid var(--border);background:var(--card);
+  font-size:16px;color:var(--text);outline:none;transition:border-color .18s}
+.fi:focus{border-color:var(--g1)}
 
-/* Search */
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.btn-p{width:100%;padding:16px;border:none;border-radius:var(--r-pill);
+  background:var(--grad);color:#fff;font-size:16px;font-weight:700;
+  cursor:pointer;margin-top:8px;
+  box-shadow:0 6px 20px rgba(155,79,30,.30);transition:opacity .15s,transform .1s}
+.btn-p:active{opacity:.88;transform:scale(.98)}
+.btn-p.sec{background:var(--card);color:var(--text);
+  border:1.5px solid var(--border);box-shadow:var(--shd-sm);margin-top:10px}
+
+/* ── Search ──────────────────────────────────────────────────────────── */
 .search-wrap{padding:14px 16px 0}
 
-/* Empty / loading */
+/* ── Empty / loading ─────────────────────────────────────────────────── */
 .empty{text-align:center;padding:60px 20px;color:var(--hint)}
-.empty .ico{font-size:46px;margin-bottom:10px}
+.empty .ico{font-size:48px;margin-bottom:12px}
 
-/* Section title */
-.stitle{font-size:12px;font-weight:700;text-transform:uppercase;
-  letter-spacing:.5px;color:var(--hint);margin:10px 0 6px}
+/* ── Section title ───────────────────────────────────────────────────── */
+.stitle{font-size:11px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.7px;color:var(--hint);margin:16px 0 10px}
 
-/* Modal overlay */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+/* ── Modal ───────────────────────────────────────────────────────────── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(44,24,16,.5);
   z-index:100;align-items:flex-end;justify-content:center}
 .modal-bg.open{display:flex}
-.modal{background:var(--bg);border-radius:20px 20px 0 0;padding:20px 16px 32px;
-  width:100%;max-width:480px}
-.modal h3{font-size:17px;font-weight:700;margin-bottom:4px}
+.modal{background:var(--card);border-radius:28px 28px 0 0;
+  padding:8px 20px 36px;width:100%;max-width:480px}
+.modal::before{content:'';display:block;width:40px;height:4px;border-radius:4px;
+  background:var(--border);margin:0 auto 18px}
+.modal h3{font-size:18px;font-weight:800;margin-bottom:4px}
 .modal p{font-size:13px;color:var(--hint);margin-bottom:16px}
-.modal-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.opt-btn{padding:14px 10px;border:none;border-radius:12px;background:var(--sec);
-  font-size:15px;font-weight:600;cursor:pointer;text-align:center}
+.modal-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.opt-btn{padding:15px 10px;border:none;border-radius:var(--r);background:var(--sec);
+  font-size:14px;font-weight:700;cursor:pointer;text-align:center;
+  color:var(--text);box-shadow:var(--shd-sm)}
 .opt-btn:active{opacity:.75}
-.opt-btn.active{background:var(--btn);color:var(--btn-txt)}
-.modal-cancel{width:100%;padding:12px;border:none;border-radius:12px;
-  background:transparent;color:var(--hint);font-size:15px;cursor:pointer;margin-top:4px}
+.opt-btn.active{background:var(--grad);color:#fff}
+.modal-cancel{width:100%;padding:14px;border:none;border-radius:var(--r-pill);
+  background:transparent;color:var(--hint);font-size:15px;cursor:pointer;margin-top:6px}
 
-/* Toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  background:rgba(0,0,0,.78);color:#fff;padding:10px 22px;border-radius:24px;
-  font-size:14px;display:none;z-index:999;white-space:nowrap}
+/* ── Toast ───────────────────────────────────────────────────────────── */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+  background:var(--text);color:#fff;padding:12px 24px;border-radius:var(--r-pill);
+  font-size:14px;display:none;z-index:999;white-space:nowrap;
+  box-shadow:0 8px 24px rgba(44,24,16,.3)}
 
-/* ── Auth / Login ──────────────────────────────────────────────────── */
-.login-hero{text-align:center;padding:32px 20px 16px}
-.login-hero .logo{font-size:52px}
-.login-hero h1{font-size:26px;font-weight:800;margin:8px 0 4px}
-.login-hero p{font-size:13px;color:var(--hint)}
-.tab-bar{display:flex;background:var(--sec);border-bottom:1px solid rgba(0,0,0,.07)}
-.tab{flex:1;padding:11px;border:none;background:none;font-size:14px;font-weight:500;
-  color:var(--hint);cursor:pointer;border-bottom:2.5px solid transparent;transition:color .15s}
-.tab.active{color:var(--btn);border-bottom-color:var(--btn)}
-.google-sep{display:flex;align-items:center;gap:10px;color:var(--hint);font-size:13px;margin:14px 0}
-.google-sep::before,.google-sep::after{content:'';flex:1;height:1px;background:rgba(0,0,0,.1)}
-.google-btn{width:100%;padding:12px;border:1.5px solid rgba(0,0,0,.15);border-radius:12px;
-  background:#fff;color:#333;font-size:15px;font-weight:500;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
+/* ── AUTH / Login ────────────────────────────────────────────────────── */
+#view-login{background:var(--grad);justify-content:flex-end}
+.login-hero{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:40px 20px 20px;color:#fff;text-align:center}
+.login-hero .logo{font-size:60px;margin-bottom:14px;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.2))}
+.login-hero h1{font-size:32px;font-weight:800;color:#fff;margin-bottom:6px}
+.login-hero p{font-size:14px;color:rgba(255,255,255,.85)}
+.login-card{background:var(--card);border-radius:32px 32px 0 0;
+  padding:8px 22px 40px;max-width:480px;width:100%}
+.login-card::before{content:'';display:block;width:40px;height:4px;
+  border-radius:4px;background:var(--border);margin:0 auto 18px}
+.tab-bar{display:flex;background:var(--sec);border-radius:var(--r-pill);
+  margin-bottom:20px;padding:3px}
+.tab{flex:1;padding:10px;border:none;background:none;font-size:14px;font-weight:600;
+  color:var(--hint);cursor:pointer;border-radius:var(--r-pill);transition:all .18s}
+.tab.active{background:var(--card);color:var(--text);box-shadow:var(--shd-sm)}
+.google-sep{display:flex;align-items:center;gap:10px;color:var(--hint);
+  font-size:13px;margin:16px 0}
+.google-sep::before,.google-sep::after{content:'';flex:1;height:1px;background:var(--border)}
+.google-btn{width:100%;padding:14px;border:1.5px solid var(--border);
+  border-radius:var(--r-pill);background:var(--card);color:var(--text);
+  font-size:15px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:var(--shd-sm);margin-bottom:8px}
 .google-btn svg{flex-shrink:0}
 
-/* ── Home cards ────────────────────────────────────────────────────── */
-.home-card{background:var(--sec);border-radius:14px;padding:16px;margin-bottom:10px;
-  cursor:pointer;transition:transform .1s;display:flex;align-items:center;gap:14px}
+/* ── Homes ───────────────────────────────────────────────────────────── */
+.home-card{background:var(--card);border-radius:var(--r);padding:18px;
+  margin-bottom:12px;cursor:pointer;transition:transform .15s;
+  display:flex;align-items:center;gap:16px;box-shadow:var(--shd)}
 .home-card:active{transform:scale(.97)}
-.home-icon{font-size:28px;flex-shrink:0}
+.home-icon{width:54px;height:54px;border-radius:18px;flex-shrink:0;
+  background:var(--grad);display:flex;align-items:center;justify-content:center;
+  font-size:28px;box-shadow:0 4px 12px rgba(155,79,30,.25)}
 .home-info{flex:1;min-width:0}
 .home-name{font-size:16px;font-weight:700}
-.home-sub{font-size:12px;color:var(--hint);margin-top:2px}
-.home-arrow{color:var(--hint);font-size:20px;flex-shrink:0}
+.home-sub{font-size:12px;color:var(--hint);margin-top:3px}
+.home-arrow{color:var(--hint);font-size:24px;flex-shrink:0}
 
-/* ── Role / status badges ──────────────────────────────────────────── */
-.rbadge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
-.r-superadmin{background:#fce8ff;color:#7700aa}
-.r-moderador{background:#e8f0ff;color:#0044bb}
-.r-usuario{background:#f0f0f0;color:#555}
-.s-activo{color:#2e7d32;font-weight:600;font-size:12px}
-.s-pendiente{color:#e65100;font-weight:600;font-size:12px}
-.s-bloqueado{color:#c62828;font-weight:600;font-size:12px}
+/* ── Role / status badges ────────────────────────────────────────────── */
+.rbadge{display:inline-block;padding:3px 10px;border-radius:var(--r-pill);
+  font-size:11px;font-weight:700}
+.r-superadmin{background:#F9E8FF;color:#6A1B9A}
+.r-moderador {background:#E8EAF6;color:#283593}
+.r-usuario   {background:#F5F5F5;color:#616161}
+.s-activo   {color:#2E7D32;font-weight:700;font-size:12px}
+.s-pendiente{color:#E65100;font-weight:700;font-size:12px}
+.s-bloqueado{color:#B71C1C;font-weight:700;font-size:12px}
 
-/* ── Perfil ─────────────────────────────────────────────────────────── */
-.perfil-top{display:flex;flex-direction:column;align-items:center;padding:24px 16px 16px;gap:10px}
-.perfil-avatar{width:72px;height:72px;border-radius:50%;background:var(--btn);
-  color:var(--btn-txt);display:flex;align-items:center;justify-content:center;
-  font-size:28px;font-weight:700;overflow:hidden;flex-shrink:0}
+/* ── Perfil ──────────────────────────────────────────────────────────── */
+.perfil-top{display:flex;flex-direction:column;align-items:center;
+  padding:32px 20px 22px;gap:10px}
+.perfil-avatar{width:84px;height:84px;border-radius:50%;background:var(--grad);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:32px;font-weight:800;overflow:hidden;flex-shrink:0;
+  box-shadow:0 8px 28px rgba(155,79,30,.30)}
 .perfil-avatar img{width:100%;height:100%;object-fit:cover}
-.perfil-nombre{font-size:20px;font-weight:700}
+.perfil-nombre{font-size:22px;font-weight:800}
 .perfil-email{font-size:13px;color:var(--hint)}
 
-/* ── Admin user rows ────────────────────────────────────────────────── */
-.user-row{background:var(--sec);border-radius:12px;padding:12px 14px;margin-bottom:8px;
-  display:flex;align-items:center;gap:10px}
-.user-av{width:36px;height:36px;border-radius:50%;background:var(--btn);
-  color:var(--btn-txt);display:flex;align-items:center;justify-content:center;
-  font-size:14px;font-weight:700;flex-shrink:0;overflow:hidden}
+/* ── Admin rows ──────────────────────────────────────────────────────── */
+.user-row{background:var(--card);border-radius:var(--r);padding:14px 16px;
+  margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:var(--shd-sm)}
+.user-av{width:40px;height:40px;border-radius:50%;background:var(--grad);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;flex-shrink:0;overflow:hidden}
 .user-av img{width:100%;height:100%;object-fit:cover}
 .user-info{flex:1;min-width:0}
-.user-name{font-size:14px;font-weight:600}
-.user-meta{font-size:12px;color:var(--hint);margin-top:1px}
-.user-acts{display:flex;gap:5px;flex-shrink:0}
+.user-name{font-size:14px;font-weight:700}
+.user-meta{font-size:12px;color:var(--hint);margin-top:2px}
+.user-acts{display:flex;gap:6px;flex-shrink:0}
 
-/* ── Panel modal (vivienda users) ──────────────────────────────────── */
-.panel-modal{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column}
+/* ── Panel modal ─────────────────────────────────────────────────────── */
+.panel-modal{position:fixed;inset:0;background:var(--bg);z-index:200;
+  display:none;flex-direction:column}
 .panel-modal.open{display:flex}
 
-/* ── Invite box ─────────────────────────────────────────────────────── */
-.invite-box{background:var(--sec);border-radius:12px;padding:12px 14px;margin-top:10px;
-  display:flex;align-items:center;gap:8px;word-break:break-all;font-size:13px}
+/* ── Invite box ──────────────────────────────────────────────────────── */
+.invite-box{background:var(--sec);border-radius:var(--r-sm);padding:14px 16px;
+  margin-top:12px;display:flex;align-items:center;gap:8px;
+  word-break:break-all;font-size:13px;border:1.5px solid var(--border)}
 
-/* Cant-real inline edit */
-.cant-edit{display:flex;gap:6px;margin-top:6px;align-items:center}
-.cant-edit input{flex:1;padding:7px 10px;border-radius:8px;border:none;
-  background:var(--bg);font-size:14px;color:var(--text);outline:none;
-  box-shadow:0 0 0 1px rgba(0,0,0,.15)}
-.cant-edit button{background:var(--btn);color:var(--btn-txt);border:none;
-  border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer}
+/* ── Cant-real ───────────────────────────────────────────────────────── */
+.cant-edit{display:flex;gap:8px;margin-top:8px;align-items:center}
+.cant-edit input{flex:1;padding:10px 14px;border-radius:var(--r-pill);
+  border:1.5px solid var(--border);background:var(--bg);
+  font-size:14px;color:var(--text);outline:none}
+.cant-edit button{background:var(--grad);color:#fff;border:none;
+  border-radius:var(--r-pill);padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer}
 
-/* Edit button on compra rows */
+/* ── Compra edit btn ─────────────────────────────────────────────────── */
 .compra-edit{background:none;border:none;color:var(--btn);font-size:18px;
-  cursor:pointer;flex-shrink:0;padding:0 4px;opacity:.7}
+  cursor:pointer;flex-shrink:0;padding:0 4px;opacity:.8}
 
-/* Inventariar modal - per-item rows */
-.modal-scroll{overflow-y:auto;max-height:48vh;margin-bottom:12px;padding-right:2px}
-.inv-item{padding:10px 0;border-bottom:1px solid rgba(0,0,0,.07)}
+/* ── Inventariar modal ───────────────────────────────────────────────── */
+.modal-scroll{overflow-y:auto;max-height:46vh;margin-bottom:14px;padding-right:2px}
+.inv-item{padding:12px 0;border-bottom:1px solid var(--border)}
 .inv-item:last-child{border-bottom:none}
-.inv-item-name{font-weight:600;font-size:14px;margin-bottom:8px}
-.inv-item-sub{font-size:12px;color:var(--hint);font-weight:400;margin-left:5px}
-.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.inv-lote+.inv-lote{margin-top:8px;padding-top:8px;border-top:1px dashed rgba(0,0,0,.12)}
-.inv-add-btn{width:100%;margin-top:8px;padding:8px;border:1.5px dashed rgba(0,0,0,.2);border-radius:10px;background:transparent;color:var(--btn);font-size:13px;font-weight:600;cursor:pointer}
-.inv-rm-btn{background:none;border:none;color:var(--hint);font-size:12px;cursor:pointer;padding:3px 0;margin-top:2px}
+.inv-item-name{font-weight:700;font-size:14px;margin-bottom:10px}
+.inv-item-sub{font-size:12px;color:var(--hint);font-weight:400;margin-left:6px}
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.inv-lote+.inv-lote{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
+.inv-add-btn{width:100%;margin-top:10px;padding:10px;border:2px dashed var(--border);
+  border-radius:var(--r-sm);background:transparent;color:var(--btn);
+  font-size:13px;font-weight:700;cursor:pointer}
+.inv-rm-btn{background:none;border:none;color:var(--hint);font-size:12px;
+  cursor:pointer;padding:4px 0;margin-top:2px}
 </style>
 </head>
 <body>
@@ -231,50 +289,52 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <h1>Despensa</h1>
     <p>Gestioná la despensa familiar</p>
   </div>
-  <div class="tab-bar">
-    <button class="tab active" id="tab-reg" onclick="switchLoginTab('register')">Registrarse</button>
-    <button class="tab" id="tab-log" onclick="switchLoginTab('login')">Iniciar sesión</button>
-  </div>
+  <div class="login-card">
+    <div class="tab-bar">
+      <button class="tab active" id="tab-reg" onclick="switchLoginTab('register')">Registrarse</button>
+      <button class="tab" id="tab-log" onclick="switchLoginTab('login')">Iniciar sesión</button>
+    </div>
 
-  <!-- Registro -->
-  <div class="content" id="pane-register">
-    <div class="fg"><label class="fl">Nombre *</label>
-      <input class="fi" id="reg-nombre" type="text" placeholder="Tu nombre"></div>
-    <div class="fg"><label class="fl">Email *</label>
-      <input class="fi" id="reg-email" type="email" placeholder="email@ejemplo.com"></div>
-    <div class="fg"><label class="fl">Contraseña * (mín. 6 caracteres)</label>
-      <input class="fi" id="reg-pass" type="password" placeholder="••••••"></div>
-    <button class="btn-p" onclick="doRegister()">✅ Crear cuenta</button>
-    <div class="google-sep"><span>o</span></div>
-    <button class="google-btn" id="google-btn-reg" onclick="signInWithGoogle()">
-      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.8 6C12.3 13 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.4-4.1 7.1-10.1 7.1-17.1z"/><path fill="#FBBC05" d="M10.4 28.8A14.7 14.7 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.6-5.9c-2.1 1.4-4.8 2.3-7.6 2.3-6.3 0-11.7-4.3-13.6-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
-      Continuar con Google
-    </button>
-    <p style="font-size:12px;color:var(--hint);text-align:center;margin-top:10px">
-      ¿Tenés un link de invitación? Registrate primero, luego usá el link.
-    </p>
-  </div>
+    <!-- Registro -->
+    <div id="pane-register">
+      <div class="fg"><label class="fl">Nombre *</label>
+        <input class="fi" id="reg-nombre" type="text" placeholder="Tu nombre"></div>
+      <div class="fg"><label class="fl">Email *</label>
+        <input class="fi" id="reg-email" type="email" placeholder="email@ejemplo.com"></div>
+      <div class="fg"><label class="fl">Contraseña * (mín. 6 caracteres)</label>
+        <input class="fi" id="reg-pass" type="password" placeholder="••••••"></div>
+      <button class="btn-p" onclick="doRegister()">Crear cuenta</button>
+      <div class="google-sep"><span>o</span></div>
+      <button class="google-btn" id="google-btn-reg" onclick="signInWithGoogle()">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.8 6C12.3 13 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.4-4.1 7.1-10.1 7.1-17.1z"/><path fill="#FBBC05" d="M10.4 28.8A14.7 14.7 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.6-5.9c-2.1 1.4-4.8 2.3-7.6 2.3-6.3 0-11.7-4.3-13.6-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
+        Continuar con Google
+      </button>
+      <p style="font-size:12px;color:var(--hint);text-align:center;margin-top:10px">
+        ¿Tenés un link de invitación? Registrate primero, luego usá el link.
+      </p>
+    </div>
 
-  <!-- Login -->
-  <div class="content" id="pane-login" style="display:none">
-    <div class="fg"><label class="fl">Email *</label>
-      <input class="fi" id="log-email" type="email" placeholder="email@ejemplo.com"></div>
-    <div class="fg"><label class="fl">Contraseña *</label>
-      <input class="fi" id="log-pass" type="password" placeholder="••••••"></div>
-    <button class="btn-p" onclick="doLogin()">Iniciar sesión</button>
-    <div class="google-sep"><span>o</span></div>
-    <button class="google-btn" id="google-btn-log" onclick="signInWithGoogle()">
-      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.8 6C12.3 13 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.4-4.1 7.1-10.1 7.1-17.1z"/><path fill="#FBBC05" d="M10.4 28.8A14.7 14.7 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.6-5.9c-2.1 1.4-4.8 2.3-7.6 2.3-6.3 0-11.7-4.3-13.6-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
-      Continuar con Google
-    </button>
+    <!-- Login -->
+    <div id="pane-login" style="display:none">
+      <div class="fg"><label class="fl">Email *</label>
+        <input class="fi" id="log-email" type="email" placeholder="email@ejemplo.com"></div>
+      <div class="fg"><label class="fl">Contraseña *</label>
+        <input class="fi" id="log-pass" type="password" placeholder="••••••"></div>
+      <button class="btn-p" onclick="doLogin()">Iniciar sesión</button>
+      <div class="google-sep"><span>o</span></div>
+      <button class="google-btn" id="google-btn-log" onclick="signInWithGoogle()">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.8 6C12.3 13 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.4-4.1 7.1-10.1 7.1-17.1z"/><path fill="#FBBC05" d="M10.4 28.8A14.7 14.7 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.6-5.9c-2.1 1.4-4.8 2.3-7.6 2.3-6.3 0-11.7-4.3-13.6-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
+        Continuar con Google
+      </button>
+    </div>
   </div>
 </div>
 
 <!-- ══ SELECTOR DE VIVIENDA ═══════════════════════════════════════════════ -->
 <div id="view-homes" class="view">
   <div class="hdr">
-    <h2 style="flex:1">🏘️ Mis viviendas</h2>
-    <button class="act-btn" onclick="go('perfil',loadPerfil)" style="background:none;font-size:22px;color:var(--hint)">👤</button>
+    <h2>🏘️ Mis viviendas</h2>
+    <button class="act-btn" onclick="go('perfil',loadPerfil)">👤 Perfil</button>
   </div>
   <div class="content">
     <div id="homes-list"></div>
@@ -285,7 +345,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 
 <!-- ══ PERFIL ═══════════════════════════════════════════════════════════════ -->
 <div id="view-perfil" class="view">
-  <div class="hdr"><button class="back" id="perfil-back">‹</button><h2>👤 Mi perfil</h2></div>
+  <div class="hdr"><button class="back" id="perfil-back">‹</button><h2>Mi perfil</h2></div>
   <div class="perfil-top">
     <div class="perfil-avatar" id="perfil-avatar">?</div>
     <div class="perfil-nombre" id="perfil-nombre">—</div>
@@ -295,16 +355,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   <div class="content">
     <div class="stitle">Mis viviendas</div>
     <div id="perfil-homes"></div>
-    <button class="btn-p danger" style="margin-top:16px;background:#ff3b30" onclick="doLogout()">Cerrar sesión</button>
+    <button class="btn-p" style="margin-top:16px;background:linear-gradient(135deg,#EF5350,#B71C1C)" onclick="doLogout()">Cerrar sesión</button>
   </div>
 </div>
 
 <!-- ══ ADMIN PANEL ═══════════════════════════════════════════════════════════ -->
 <div id="view-admin" class="view">
-  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>⚙️ Administración</h2></div>
-  <div class="tab-bar">
-    <button class="tab active" id="atab-usuarios" onclick="adminTab('usuarios')">Usuarios</button>
-    <button class="tab" id="atab-viviendas" onclick="adminTab('viviendas')">Viviendas</button>
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Administración</h2></div>
+  <div class="tab-bar" style="border-radius:0;padding:4px 12px;background:rgba(255,255,255,.15)">
+    <button class="tab active" id="atab-usuarios" onclick="adminTab('usuarios')" style="color:rgba(255,255,255,.7)">Usuarios</button>
+    <button class="tab" id="atab-viviendas" onclick="adminTab('viviendas')" style="color:rgba(255,255,255,.7)">Viviendas</button>
   </div>
   <div class="content" id="admin-content"></div>
 </div>
@@ -315,9 +375,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <button class="back" onclick="closePanelVivienda()">‹</button>
     <h2 id="panel-vivienda-title">Vivienda</h2>
   </div>
-  <div class="tab-bar">
-    <button class="tab active" id="vtab-usuarios" onclick="viviendaTab('usuarios')">Usuarios</button>
-    <button class="tab" id="vtab-invitar" onclick="viviendaTab('invitar')">Invitar</button>
+  <div class="tab-bar" style="border-radius:0;padding:4px 12px;background:rgba(255,255,255,.15)">
+    <button class="tab active" id="vtab-usuarios" onclick="viviendaTab('usuarios')" style="color:rgba(255,255,255,.7)">Usuarios</button>
+    <button class="tab" id="vtab-invitar" onclick="viviendaTab('invitar')" style="color:rgba(255,255,255,.7)">Invitar</button>
   </div>
   <div class="content" id="panel-vivienda-content"></div>
 </div>
@@ -326,12 +386,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <div class="modal-bg" id="modal-new-home" onclick="closeModalNewHome(event)">
   <div class="modal">
     <h3>🏡 Nueva vivienda</h3>
-    <p style="margin-bottom:14px">Dale un nombre a tu casa o depto.</p>
+    <p>Dale un nombre a tu casa o depto.</p>
     <div class="fg"><label class="fl">Nombre *</label>
       <input class="fi" id="nh-nombre" type="text" placeholder="Ej: Casa familiar"></div>
     <div class="fg"><label class="fl">Descripción (opcional)</label>
       <input class="fi" id="nh-desc" type="text" placeholder="Ej: Depto piso 3"></div>
-    <button class="btn-p" onclick="doCreateHome()">✅ Crear vivienda</button>
+    <button class="btn-p" onclick="doCreateHome()">Crear vivienda</button>
     <button class="modal-cancel" onclick="closeModalNewHome()">Cancelar</button>
   </div>
 </div>
@@ -340,7 +400,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <div class="modal-bg" id="modal-join" onclick="closeModalJoin(event)">
   <div class="modal">
     <h3>🔗 Unirse con invitación</h3>
-    <p style="margin-bottom:14px">Pegá el código o link de invitación.</p>
+    <p>Pegá el código o link de invitación.</p>
     <div class="fg"><label class="fl">Código de invitación</label>
       <input class="fi" id="join-token" type="text" placeholder="Código o URL completa"></div>
     <button class="btn-p" onclick="doJoin()">Unirse</button>
@@ -349,52 +409,59 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 </div>
 
 <!-- ══ MENÚ ═════════════════════════════════════════════════════════════ -->
-<div id="view-menu" class="view">
-  <div class="menu-top">
-    <div class="logo">🏠</div>
-    <h1 id="menu-home-name">Despensa</h1>
-    <p id="subtitle">Cargando…</p>
+<div id="view-menu" class="view" style="overflow-y:auto">
+  <div class="dash-hdr">
+    <div class="dash-hdr-top">
+      <div>
+        <div class="dash-greeting">Bienvenido 👋</div>
+        <div class="dash-title" id="menu-home-name">Despensa</div>
+        <div class="dash-sub" id="subtitle">Cargando…</div>
+      </div>
+      <div class="dash-av" id="dash-avatar" onclick="go('perfil',loadPerfil)">?</div>
+    </div>
   </div>
-  <div class="grid">
-    <button class="mbtn" onclick="go('list',loadList)">
-      <span class="ico">📋</span><span>Ver todo</span>
-    </button>
-    <button class="mbtn" onclick="go('add')">
-      <span class="ico">➕</span><span>Agregar</span>
-    </button>
-    <button class="mbtn" onclick="go('expiring',loadExpiring)">
-      <span class="ico">⚠️</span><span>Por vencer</span>
-    </button>
-    <button class="mbtn" onclick="go('search')">
-      <span class="ico">🔍</span><span>Buscar</span>
-    </button>
-    <button class="mbtn" onclick="go('compras',loadCompras)">
-      <span class="ico">🛒</span><span>Lista compras</span>
-    </button>
-    <button class="mbtn" onclick="go('abiertos',loadAbiertos)">
-      <span class="ico">📂</span><span>Abiertos</span>
-    </button>
-    <button class="mbtn wide" onclick="go('delete',loadDeleteList)">
-      <span class="ico">🗑️</span><span>Eliminar</span>
-    </button>
-    <button class="mbtn" onclick="go('perfil',loadPerfil)">
-      <span class="ico">👤</span><span>Perfil</span>
-    </button>
-    <button class="mbtn" id="btn-admin" style="display:none" onclick="go('admin',()=>adminTab('usuarios'))">
-      <span class="ico">⚙️</span><span>Admin</span>
-    </button>
+  <div class="dash-body">
+    <div class="grid">
+      <button class="mbtn" onclick="go('list',loadList)">
+        <div class="ico-wrap">📋</div><span>Ver todo</span>
+      </button>
+      <button class="mbtn" onclick="go('add')">
+        <div class="ico-wrap">➕</div><span>Agregar</span>
+      </button>
+      <button class="mbtn" onclick="go('expiring',loadExpiring)">
+        <div class="ico-wrap">⚠️</div><span>Por vencer</span>
+      </button>
+      <button class="mbtn" onclick="go('search')">
+        <div class="ico-wrap">🔍</div><span>Buscar</span>
+      </button>
+      <button class="mbtn" onclick="go('compras',loadCompras)">
+        <div class="ico-wrap">🛒</div><span>Lista compras</span>
+      </button>
+      <button class="mbtn" onclick="go('abiertos',loadAbiertos)">
+        <div class="ico-wrap">📂</div><span>Abiertos</span>
+      </button>
+      <button class="mbtn wide" onclick="go('delete',loadDeleteList)">
+        <div class="ico-wrap">🗑️</div><span>Eliminar</span>
+      </button>
+      <button class="mbtn" onclick="go('perfil',loadPerfil)">
+        <div class="ico-wrap">👤</div><span>Perfil</span>
+      </button>
+      <button class="mbtn" id="btn-admin" style="display:none" onclick="go('admin',()=>adminTab('usuarios'))">
+        <div class="ico-wrap">⚙️</div><span>Admin</span>
+      </button>
+    </div>
   </div>
 </div>
 
 <!-- ══ VER TODO ══════════════════════════════════════════════════════════ -->
 <div id="view-list" class="view">
-  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>📋 Despensa completa</h2></div>
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Despensa completa</h2></div>
   <div class="content" id="list-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
 </div>
 
 <!-- ══ AGREGAR ═══════════════════════════════════════════════════════════ -->
 <div id="view-add" class="view">
-  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>➕ Agregar insumo</h2></div>
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Agregar insumo</h2></div>
   <div class="content">
     <div class="fg"><label class="fl">Producto *</label>
       <input class="fi" id="f-nombre" placeholder="Ej: Azúcar" type="text" list="dl-nombres" autocomplete="off"></div>
@@ -410,19 +477,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       <input class="fi" id="f-vence" type="date"></div>
     <div class="fg"><label class="fl">Comentario</label>
       <input class="fi" id="f-comentario" placeholder="Ej: Para las tortas" type="text"></div>
-    <button class="btn-p" onclick="submitAdd()">✅ Guardar</button>
+    <button class="btn-p" onclick="submitAdd()">Guardar</button>
   </div>
 </div>
 
 <!-- ══ POR VENCER ════════════════════════════════════════════════════════ -->
 <div id="view-expiring" class="view">
-  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>⚠️ Por vencer</h2></div>
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Por vencer</h2></div>
   <div class="content" id="expiring-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
 </div>
 
 <!-- ══ BUSCAR ════════════════════════════════════════════════════════════ -->
 <div id="view-search" class="view">
-  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>🔍 Buscar</h2></div>
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Buscar</h2></div>
   <div class="search-wrap">
     <input class="fi" id="search-q" placeholder="Nombre del producto…" type="text" oninput="doSearch(this.value)">
   </div>
@@ -433,20 +500,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 
 <!-- ══ ABIERTOS ══════════════════════════════════════════════════════════ -->
 <div id="view-abiertos" class="view">
-  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>📂 Productos abiertos</h2></div>
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Productos abiertos</h2></div>
   <div class="content" id="abiertos-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
 </div>
 
 <!-- ══ ELIMINAR ══════════════════════════════════════════════════════════ -->
 <div id="view-delete" class="view">
-  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>🗑️ Eliminar</h2></div>
+  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Eliminar</h2></div>
   <div class="content" id="delete-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
 </div>
 
 <!-- ══ LISTA DE COMPRAS ══════════════════════════════════════════════════ -->
 <div id="view-compras" class="view">
-  <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>🛒 Lista de compras</h2>
-    <button class="act-btn" style="flex-shrink:0" onclick="go('add-compra')">+ Agregar</button>
+  <div class="hdr">
+    <button class="back" onclick="go('menu')">‹</button>
+    <h2>Lista de compras</h2>
+    <button class="act-btn" onclick="go('add-compra')">+ Agregar</button>
   </div>
   <div class="content" id="compras-content"><div class="empty"><div class="ico">⏳</div><p>Cargando…</p></div></div>
   <div class="action-bar" id="compras-bar" style="display:none">
@@ -456,7 +525,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 
 <!-- ══ AGREGAR A LISTA ════════════════════════════════════════════════════ -->
 <div id="view-add-compra" class="view">
-  <div class="hdr"><button class="back" onclick="go('compras',loadCompras)">‹</button><h2>🛒 Agregar a la lista</h2></div>
+  <div class="hdr"><button class="back" onclick="go('compras',loadCompras)">‹</button><h2>Agregar a la lista</h2></div>
   <div class="content">
     <div class="fg"><label class="fl">Producto *</label>
       <input class="fi" id="lc-nombre" placeholder="Ej: Fideos" type="text" list="dl-nombres" autocomplete="off"></div>
@@ -468,7 +537,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       <input class="fi" id="lc-cantidad" placeholder="Ej: 500g, 1 kg, 1 l" type="text"></div>
     <div class="fg"><label class="fl">Comentario</label>
       <input class="fi" id="lc-comentario" placeholder="Ej: La oferta del jueves" type="text"></div>
-    <button class="btn-p" onclick="submitCompra()">✅ Agregar a la lista</button>
+    <button class="btn-p" onclick="submitCompra()">Agregar a la lista</button>
   </div>
 </div>
 
@@ -483,7 +552,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
       <button class="opt-btn" onclick="applyConsumo('1/2')">1/2</button>
       <button class="opt-btn" onclick="applyConsumo('1/4')">1/4</button>
     </div>
-    <button class="opt-btn danger" style="width:100%;margin-bottom:6px;background:#ff3b30;color:#fff;border-radius:12px;padding:13px" onclick="doVaciar()">
+    <button class="opt-btn danger" style="width:100%;margin-bottom:6px;background:linear-gradient(135deg,#EF5350,#B71C1C);color:#fff;border-radius:var(--r);padding:15px" onclick="doVaciar()">
       🗑️ Ya se terminó (vaciar)
     </button>
     <button class="modal-cancel" onclick="closeConsumoModal()">Cancelar</button>
@@ -496,7 +565,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     <h3>🏪 Ingresar al inventario</h3>
     <p>Ajustá unidades y fecha de vencimiento por producto.</p>
     <div id="inv-items" class="modal-scroll"></div>
-    <button class="btn-p" onclick="doInventariar()">✅ Ingresar todo</button>
+    <button class="btn-p" onclick="doInventariar()">Ingresar todo</button>
     <button class="modal-cancel" onclick="closeInvModal()">Cancelar</button>
   </div>
 </div>
@@ -505,19 +574,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <div class="modal-bg" id="modal-edit-compra" onclick="closeEditCompra(event)">
   <div class="modal" style="max-height:88vh;overflow-y:auto">
     <h3>✏️ Editar producto</h3>
-    <p style="margin-bottom:14px">Modificá los datos del producto en la lista.</p>
+    <p>Modificá los datos del producto en la lista.</p>
     <input type="hidden" id="ec-id">
     <div class="fg"><label class="fl">Producto *</label>
       <input class="fi" id="ec-nombre" type="text" list="dl-nombres" autocomplete="off"></div>
     <div class="fg"><label class="fl">Marca</label>
       <input class="fi" id="ec-marca" type="text" list="dl-marcas" autocomplete="off"></div>
-    <div class="fg"><label class="fl">Unidades (cantidad de paquetes)</label>
+    <div class="fg"><label class="fl">Unidades</label>
       <input class="fi" id="ec-unidades" type="number" min="1" value="1"></div>
     <div class="fg"><label class="fl">Contenido por unidad</label>
       <input class="fi" id="ec-cantidad" type="text" placeholder="Ej: 500g, 1 kg, 1 l"></div>
     <div class="fg"><label class="fl">Comentario</label>
       <input class="fi" id="ec-comentario" type="text" placeholder="Ej: La oferta del jueves"></div>
-    <button class="btn-p" onclick="submitEditCompra()">✅ Guardar cambios</button>
+    <button class="btn-p" onclick="submitEditCompra()">Guardar cambios</button>
     <button class="modal-cancel" onclick="closeEditCompra()">Cancelar</button>
   </div>
 </div>
@@ -535,15 +604,14 @@ tg.ready(); tg.expand();
 const init   = tg.initDataUnsafe || {};
 const BASE   = window.location.origin;
 
-// Estado global de auth
 let _token    = localStorage.getItem('despensa_token') || null;
 let _me       = null;
 let _myHomes  = [];
-let chatId    = null;          // chat_id de la vivienda activa
-let _currentVid  = null;       // id de la vivienda activa
+let chatId    = null;
+let _currentVid  = null;
 let _homeName    = '';
 let _googleReady = false;
-let _panelVid    = null;       // vivienda actualmente abierta en el panel
+let _panelVid    = null;
 
 document.getElementById('f-compra').valueAsDate = new Date();
 
@@ -583,6 +651,14 @@ function go(name,onShow){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   if(onShow)onShow();
+}
+
+/* ── Dashboard avatar ────────────────────────────────────────────────── */
+function updateDashAv(){
+  const el=document.getElementById('dash-avatar');
+  if(!el||!_me)return;
+  if(_me.avatar)el.innerHTML=`<img src="${esc(_me.avatar)}" alt="av">`;
+  else el.textContent=(_me.nombre||'?')[0].toUpperCase();
 }
 
 /* ── Inventory card HTML ──────────────────────────────────────────────── */
@@ -854,7 +930,7 @@ async function doInventariar(){
   }
 }
 
-/* ── Editar ítem de lista de compras ────────────────────────────────────── */
+/* ── Editar ítem de lista ────────────────────────────────────────────────── */
 function openEditCompra(id){
   const item=_comprasData.find(i=>i.id===id);
   if(!item)return;
@@ -951,7 +1027,7 @@ async function refreshSubtitle(){
   if(items)document.getElementById('subtitle').textContent=items.length?`${items.length} productos`:'La despensa está vacía';
 }
 
-/* ── Sugerencias (autocompletado) ────────────────────────────────────── */
+/* ── Sugerencias ─────────────────────────────────────────────────────── */
 async function loadSuggestions() {
   if(!chatId)return;
   const data = await api(`/api/suggestions?chat_id=${chatId}`);
@@ -1025,7 +1101,7 @@ async function handleGoogleToken(response){
   else toast('❌ '+(r?.error||'Error con Google'));
 }
 
-/* ── Post-login flow ─────────────────────────────────────────────────── */
+/* ── Post-login ──────────────────────────────────────────────────────── */
 async function postLogin(){
   const invCode=new URLSearchParams(location.search).get('invite');
   if(invCode){
@@ -1050,6 +1126,7 @@ function selectHome(chat_id,nombre,vid){
   chatId=chat_id;_currentVid=vid;_homeName=nombre;
   document.getElementById('menu-home-name').textContent=nombre||'Despensa';
   localStorage.setItem('despensa_last_home',JSON.stringify({chat_id,nombre,vid}));
+  updateDashAv();
   go('menu');refreshSubtitle();loadSuggestions();
 }
 
@@ -1079,7 +1156,7 @@ async function loadHomes(){
       <div class="home-info">
         <div class="home-name">${esc(h.nombre)}</div>
         <div class="home-sub">${h.n_usuarios!=null?`${h.n_usuarios} usuario(s)`:''}</div>
-        <div class="home-sub" style="margin-top:3px">
+        <div class="home-sub" style="margin-top:4px">
           <span class="rbadge r-${h.mi_rol||'usuario'}">${h.mi_rol||'usuario'}</span>
         </div>
       </div>
@@ -1132,7 +1209,7 @@ function loadPerfil(){
   const el=document.getElementById('perfil-homes');
   if(!_myHomes.length){el.innerHTML='<p style="color:var(--hint);font-size:13px">Sin viviendas asignadas</p>';return}
   el.innerHTML=_myHomes.map(h=>`
-    <div class="card" style="margin-bottom:8px">
+    <div class="card" style="margin-bottom:10px">
       <div class="card-name">🏠 ${esc(h.nombre)}</div>
       <div class="card-line"><span class="rbadge r-${h.mi_rol||'usuario'}">${h.mi_rol||'usuario'}</span></div>
       ${(h.mi_rol==='moderador'||_me?.rol==='superadmin')
@@ -1141,7 +1218,7 @@ function loadPerfil(){
     </div>`).join('');
 }
 
-/* ══ ADMIN PANEL ════════════════════════════════════════════════════════════ */
+/* ══ ADMIN ══════════════════════════════════════════════════════════════════ */
 
 async function adminTab(tab){
   document.getElementById('atab-usuarios').classList.toggle('active',tab==='usuarios');
@@ -1255,14 +1332,14 @@ async function viviendaTab(tab){
       </div>`).join('');
   } else {
     el.innerHTML=`
-      <p style="font-size:13px;color:var(--hint);margin-bottom:14px">Generá un link de invitación válido por 7 días.</p>
+      <p style="font-size:13px;color:var(--hint);margin-bottom:16px">Generá un link de invitación válido por 7 días.</p>
       <div class="fg"><label class="fl">Rol del invitado</label>
-        <select class="fi" id="inv-rol" style="height:44px">
+        <select class="fi" id="inv-rol" style="height:50px">
           <option value="usuario">Usuario</option>
           <option value="moderador">Moderador</option>
         </select></div>
       <button class="btn-p" onclick="generarInvite()">🔗 Generar link</button>
-      <div id="invite-result" style="margin-top:12px"></div>`;
+      <div id="invite-result" style="margin-top:14px"></div>`;
   }
 }
 
@@ -1287,7 +1364,7 @@ async function generarInvite(){
   if(r?.ok){
     const el=document.getElementById('invite-result');
     el.innerHTML=`<div class="invite-box">🔗 <span>${esc(r.link)}</span></div>
-      <button class="btn-p sec" style="margin-top:8px" onclick="navigator.clipboard?.writeText('${esc(r.link)}').then(()=>toast('✅ Link copiado')).catch(()=>toast('${esc(r.link)}'))">📋 Copiar link</button>`;
+      <button class="btn-p sec" style="margin-top:10px" onclick="navigator.clipboard?.writeText('${esc(r.link)}').then(()=>toast('✅ Link copiado')).catch(()=>toast('${esc(r.link)}'))">📋 Copiar link</button>`;
   }
 }
 
