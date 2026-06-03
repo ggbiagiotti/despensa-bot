@@ -281,24 +281,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 
 /* ── Scan IA ─────────────────────────────────────────────────────────── */
 .scan-section{margin-bottom:20px}
-.scan-btn{width:100%;padding:16px;border:2px dashed var(--g1);border-radius:var(--r);
-  background:transparent;color:var(--btn);font-size:15px;font-weight:700;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
-  transition:background .15s,border-color .15s}
+.scan-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.scan-btn{padding:15px 10px;border:2px dashed var(--g1);border-radius:var(--r);
+  background:transparent;color:var(--btn);font-size:14px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:background .15s}
 .scan-btn:active{background:var(--sec)}
-.scan-btn svg{width:22px;height:22px;flex-shrink:0}
+.scan-btn svg{width:20px;height:20px;flex-shrink:0}
 .scan-preview{position:relative;border-radius:var(--r);overflow:hidden;
-  margin-top:12px}
-.scan-preview img{width:100%;max-height:220px;object-fit:cover;display:block}
+  margin-top:12px;background:#000}
+.scan-preview img{width:100%;max-height:200px;object-fit:cover;display:block;
+  opacity:.85}
+.scan-close{position:absolute;top:8px;left:8px;width:30px;height:30px;
+  border-radius:50%;background:rgba(44,24,16,.75);color:#fff;border:none;
+  font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0}
 .scan-overlay{position:absolute;inset:0;background:rgba(44,24,16,.55);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:10px;color:#fff;font-size:14px;font-weight:600}
 .scan-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.3);
   border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.scan-ok-badge{position:absolute;top:10px;right:10px;background:var(--grad);
-  color:#fff;border-radius:var(--r-pill);padding:5px 12px;font-size:12px;
-  font-weight:700;box-shadow:var(--shd-sm)}
+.scan-ok-badge{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  background:var(--grad);color:#fff;border-radius:var(--r-pill);
+  padding:6px 16px;font-size:12px;font-weight:700;white-space:nowrap;
+  box-shadow:var(--shd-sm)}
 
 /* ── SVG icon helpers ────────────────────────────────────────────────── */
 .ico-wrap svg{width:28px;height:28px;color:#fff}
@@ -498,12 +505,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 
     <!-- ── Scan IA ─────────────────────────────────────────────────── -->
     <div class="scan-section">
-      <button type="button" class="scan-btn" onclick="triggerScan()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Escanear producto con IA
-      </button>
+      <div class="scan-btns">
+        <button type="button" class="scan-btn" onclick="triggerCamera()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Cámara
+        </button>
+        <button type="button" class="scan-btn" onclick="triggerGallery()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Galería
+        </button>
+      </div>
       <div class="scan-preview" id="scan-preview" style="display:none">
         <img id="scan-img" alt="preview">
+        <button class="scan-close" onclick="closeScanPreview()" title="Cerrar">×</button>
         <div class="scan-overlay" id="scan-overlay" style="display:none">
           <div class="scan-spinner"></div>
           <span>Analizando con IA…</span>
@@ -511,7 +525,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
         <div class="scan-ok-badge" id="scan-ok" style="display:none">Campos completados</div>
       </div>
     </div>
-    <input type="file" id="scan-input" accept="image/*" capture="environment"
+    <!-- cámara directa -->
+    <input type="file" id="scan-input-cam" accept="image/*" capture="environment"
+           style="display:none" onchange="handleScanFile(this)">
+    <!-- galería / almacenamiento -->
+    <input type="file" id="scan-input-gal" accept="image/*"
            style="display:none" onchange="handleScanFile(this)">
 
     <div class="fg"><label class="fl">Producto *</label>
@@ -685,8 +703,13 @@ function icon(name,size=20){
 }
 
 /* ── Scan IA ──────────────────────────────────────────────────────────── */
-function triggerScan(){
-  document.getElementById('scan-input').click();
+function triggerCamera()  { document.getElementById('scan-input-cam').click(); }
+function triggerGallery() { document.getElementById('scan-input-gal').click(); }
+function closeScanPreview(){
+  const p=document.getElementById('scan-preview');
+  p.style.display='none';
+  document.getElementById('scan-img').src='';
+  document.getElementById('scan-ok').style.display='none';
 }
 
 async function _compressImage(dataUrl, maxW=900, quality=0.82){
@@ -714,7 +737,6 @@ async function handleScanFile(input){
   const overlay=document.getElementById('scan-overlay');
   const okBadge=document.getElementById('scan-ok');
 
-  // Leer y mostrar preview
   const reader=new FileReader();
   reader.onload=async e=>{
     const original=e.target.result;
@@ -724,7 +746,6 @@ async function handleScanFile(input){
     overlay.style.display='flex';
 
     try{
-      // Comprimir antes de enviar
       const compressed=await _compressImage(original);
       const [header,b64]=compressed.split(',');
       const mediaType=header.match(/:(.*?);/)?.[1]||'image/jpeg';
@@ -739,18 +760,22 @@ async function handleScanFile(input){
 
       if(result?.ok && result.data){
         const d=result.data;
-        if(d.nombre)   document.getElementById('f-nombre').value=d.nombre;
-        if(d.marca)    document.getElementById('f-marca').value=d.marca;
-        if(d.cantidad) document.getElementById('f-cantidad').value=d.cantidad;
+        if(d.nombre)      document.getElementById('f-nombre').value=d.nombre;
+        if(d.marca)       document.getElementById('f-marca').value=d.marca;
+        if(d.cantidad)    document.getElementById('f-cantidad').value=d.cantidad;
         if(d.fecha_vence) document.getElementById('f-vence').value=d.fecha_vence;
-        if(d.comentario) document.getElementById('f-comentario').value=d.comentario;
+        if(d.comentario)  document.getElementById('f-comentario').value=d.comentario;
+        // Mostrar badge y auto-ocultar preview a los 2.5s
         okBadge.style.display='block';
+        setTimeout(closeScanPreview, 2500);
         toast('Revisá los campos y guardá');
       } else {
+        setTimeout(closeScanPreview, 1500);
         toast(result?.error||'No se pudo leer el producto');
       }
     } catch(err){
       overlay.style.display='none';
+      setTimeout(closeScanPreview, 1500);
       toast('Error al analizar la imagen');
     }
   };
