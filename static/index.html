@@ -279,6 +279,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .inv-rm-btn{background:none;border:none;color:var(--hint);font-size:12px;
   cursor:pointer;padding:4px 0;margin-top:2px}
 
+/* ── Scan IA ─────────────────────────────────────────────────────────── */
+.scan-section{margin-bottom:20px}
+.scan-btn{width:100%;padding:16px;border:2px dashed var(--g1);border-radius:var(--r);
+  background:transparent;color:var(--btn);font-size:15px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:background .15s,border-color .15s}
+.scan-btn:active{background:var(--sec)}
+.scan-btn svg{width:22px;height:22px;flex-shrink:0}
+.scan-preview{position:relative;border-radius:var(--r);overflow:hidden;
+  margin-top:12px}
+.scan-preview img{width:100%;max-height:220px;object-fit:cover;display:block}
+.scan-overlay{position:absolute;inset:0;background:rgba(44,24,16,.55);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;color:#fff;font-size:14px;font-weight:600}
+.scan-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scan-ok-badge{position:absolute;top:10px;right:10px;background:var(--grad);
+  color:#fff;border-radius:var(--r-pill);padding:5px 12px;font-size:12px;
+  font-weight:700;box-shadow:var(--shd-sm)}
+
 /* ── SVG icon helpers ────────────────────────────────────────────────── */
 .ico-wrap svg{width:28px;height:28px;color:#fff}
 .home-icon svg{width:28px;height:28px;color:#fff}
@@ -474,6 +495,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 <div id="view-add" class="view">
   <div class="hdr"><button class="back" onclick="go('menu')">‹</button><h2>Agregar insumo</h2></div>
   <div class="content">
+
+    <!-- ── Scan IA ─────────────────────────────────────────────────── -->
+    <div class="scan-section">
+      <button type="button" class="scan-btn" onclick="triggerScan()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Escanear producto con IA
+      </button>
+      <div class="scan-preview" id="scan-preview" style="display:none">
+        <img id="scan-img" alt="preview">
+        <div class="scan-overlay" id="scan-overlay" style="display:none">
+          <div class="scan-spinner"></div>
+          <span>Analizando con IA…</span>
+        </div>
+        <div class="scan-ok-badge" id="scan-ok" style="display:none">Campos completados</div>
+      </div>
+    </div>
+    <input type="file" id="scan-input" accept="image/*" capture="environment"
+           style="display:none" onchange="handleScanFile(this)">
+
     <div class="fg"><label class="fl">Producto *</label>
       <input class="fi" id="f-nombre" placeholder="Ej: Azúcar" type="text" list="dl-nombres" autocomplete="off"></div>
     <div class="fg"><label class="fl">Marca</label>
@@ -642,6 +682,79 @@ function icon(name,size=20){
     copy:'<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
   };
   return`<svg xmlns="http://www.w3.org/2000/svg" ${s}>${p[name]||''}</svg>`;
+}
+
+/* ── Scan IA ──────────────────────────────────────────────────────────── */
+function triggerScan(){
+  document.getElementById('scan-input').click();
+}
+
+async function _compressImage(dataUrl, maxW=900, quality=0.82){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      let w=img.width, h=img.height;
+      if(w>maxW){h=Math.round(h*maxW/w);w=maxW}
+      const c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      resolve(c.toDataURL('image/jpeg',quality));
+    };
+    img.src=dataUrl;
+  });
+}
+
+async function handleScanFile(input){
+  const file=input.files?.[0];
+  if(!file)return;
+  input.value=''; // reset para permitir re-selección
+
+  const preview=document.getElementById('scan-preview');
+  const imgEl=document.getElementById('scan-img');
+  const overlay=document.getElementById('scan-overlay');
+  const okBadge=document.getElementById('scan-ok');
+
+  // Leer y mostrar preview
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const original=e.target.result;
+    imgEl.src=original;
+    preview.style.display='block';
+    okBadge.style.display='none';
+    overlay.style.display='flex';
+
+    try{
+      // Comprimir antes de enviar
+      const compressed=await _compressImage(original);
+      const [header,b64]=compressed.split(',');
+      const mediaType=header.match(/:(.*?);/)?.[1]||'image/jpeg';
+
+      const result=await api('/api/analyze-photo',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({image:b64, media_type:mediaType, chat_id:chatId})
+      });
+
+      overlay.style.display='none';
+
+      if(result?.ok && result.data){
+        const d=result.data;
+        if(d.nombre)   document.getElementById('f-nombre').value=d.nombre;
+        if(d.marca)    document.getElementById('f-marca').value=d.marca;
+        if(d.cantidad) document.getElementById('f-cantidad').value=d.cantidad;
+        if(d.fecha_vence) document.getElementById('f-vence').value=d.fecha_vence;
+        if(d.comentario) document.getElementById('f-comentario').value=d.comentario;
+        okBadge.style.display='block';
+        toast('Revisá los campos y guardá');
+      } else {
+        toast(result?.error||'No se pudo leer el producto');
+      }
+    } catch(err){
+      overlay.style.display='none';
+      toast('Error al analizar la imagen');
+    }
+  };
+  reader.readAsDataURL(file);
 }
 
 let _token    = localStorage.getItem('despensa_token') || null;

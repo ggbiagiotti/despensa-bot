@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 import urllib.request
@@ -11,6 +12,7 @@ flask_app = Flask(__name__, static_folder="static")
 flask_app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-despensa-2025")
 TOKEN             = os.environ.get("TELEGRAM_TOKEN", "")
 GOOGLE_CLIENT_ID  = os.environ.get("GOOGLE_CLIENT_ID", "")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 
 # ── Auth helpers ─────────────────────────────────────────────────────────────
@@ -564,6 +566,86 @@ def admin_delete_usuario(uid):
 @require_superadmin
 def admin_get_viviendas():
     return jsonify([_v(v) for v in db.listar_todas_viviendas()])
+
+
+# ══ VISIÓN IA ═════════════════════════════════════════════════════════════════
+
+@flask_app.route("/api/analyze-photo", methods=["POST"])
+@require_auth
+def analyze_photo():
+    """Analiza una foto de producto con Claude Vision y devuelve campos autocompletados."""
+    if not ANTHROPIC_API_KEY:
+        return jsonify({"error": "API de visión no configurada"}), 503
+
+    data       = request.json or {}
+    image_b64  = data.get("image")          # base64 sin el prefijo data:...
+    media_type = data.get("media_type", "image/jpeg")
+    chat_id    = data.get("chat_id")
+
+    if not image_b64:
+        return jsonify({"error": "Imagen requerida"}), 400
+
+    # Contexto histórico de la despensa para mejorar detección
+    historial = ""
+    if chat_id:
+        try:
+            sugg   = db.get_suggestions(chat_id)
+            names  = sugg.get("nombres", [])[:20]
+            brands = sugg.get("marcas", [])[:10]
+            if names:
+                historial += f"Productos ya cargados: {', '.join(names)}. "
+            if brands:
+                historial += f"Marcas conocidas: {', '.join(brands)}."
+        except Exception:
+            pass
+
+    prompt = (
+        "Analizá esta imagen de un producto alimenticio para una app de inventario de despensa.\n"
+        "Extraé exactamente estos 5 campos:\n"
+        "- nombre: nombre genérico del producto (ej: 'Fideos spaghetti', 'Leche entera')\n"
+        "- marca: marca comercial si es visible, caso contrario null\n"
+        "- cantidad: contenido por unidad (ej: '500g', '1L', '200ml'), caso contrario null\n"
+        "- fecha_vence: fecha de vencimiento en formato YYYY-MM-DD si es legible, caso contrario null\n"
+        "- comentario: dato adicional relevante (sabor, variedad, etc.), caso contrario null\n"
+    )
+    if historial:
+        prompt += f"\nContexto de esta despensa para mejor precisión: {historial}\n"
+    prompt += "\nRespondé ÚNICAMENTE con un objeto JSON válido con esos 5 campos, sin texto adicional ni markdown."
+
+    try:
+        import anthropic as _ant
+        client   = _ant.Anthropic(api_key=ANTHROPIC_API_KEY)
+        response = client.messages.create(
+            model="claude-haiku-4-5",
+            max_tokens=512,
+            messages=[{
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image",
+                        "source": {
+                            "type":       "base64",
+                            "media_type": media_type,
+                            "data":       image_b64,
+                        },
+                    },
+                    {"type": "text", "text": prompt},
+                ],
+            }],
+        )
+        raw = response.content[0].text.strip()
+        # Limpiar posibles backticks de markdown
+        if raw.startswith("```"):
+            parts = raw.split("```")
+            raw = parts[1] if len(parts) > 1 else raw
+            if raw.lower().startswith("json"):
+                raw = raw[4:]
+        resultado = json.loads(raw.strip())
+        return jsonify({"ok": True, "data": resultado})
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Respuesta IA no parseable: {e}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error de análisis: {str(e)}"}), 500
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
