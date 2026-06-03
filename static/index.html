@@ -660,6 +660,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   </div>
 </div>
 
+<!-- ══ MODAL: Cámara ══════════════════════════════════════════════════════ -->
+<div class="modal-bg" id="modal-camera">
+  <div class="modal" style="padding:0;overflow:hidden">
+    <video id="cam-video" autoplay playsinline muted
+           style="width:100%;display:block;max-height:62vh;object-fit:cover;background:#000"></video>
+    <canvas id="cam-canvas" style="display:none"></canvas>
+    <div style="padding:16px 20px 28px;display:flex;gap:10px">
+      <button class="btn-p sec" style="flex:1;margin:0" onclick="closeCameraModal()">Cancelar</button>
+      <button class="btn-p" style="flex:1;margin:0" onclick="capturePhoto()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Tomar foto
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Datalists para autocompletado -->
 <datalist id="dl-nombres"></datalist>
 <datalist id="dl-marcas"></datalist>
@@ -703,11 +719,48 @@ function icon(name,size=20){
 }
 
 /* ── Scan IA ──────────────────────────────────────────────────────────── */
-function triggerCamera()  { document.getElementById('scan-input-cam').click(); }
-function triggerGallery() { document.getElementById('scan-input-gal').click(); }
+let _camStream = null;
+
+async function triggerCamera(){
+  // Intentar Camera API nativa (no pasa por el explorador de archivos)
+  if(navigator.mediaDevices?.getUserMedia){
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video:{ facingMode:'environment', width:{ideal:1280}, height:{ideal:960} }
+      });
+      _camStream = stream;
+      const vid = document.getElementById('cam-video');
+      vid.srcObject = stream;
+      document.getElementById('modal-camera').classList.add('open');
+      return;
+    } catch(err){
+      // Sin permisos o no disponible — caer al input
+    }
+  }
+  // Fallback: input con capture (funciona en algunos dispositivos)
+  document.getElementById('scan-input-cam').click();
+}
+
+function closeCameraModal(){
+  if(_camStream){ _camStream.getTracks().forEach(t=>t.stop()); _camStream=null; }
+  document.getElementById('cam-video').srcObject=null;
+  document.getElementById('modal-camera').classList.remove('open');
+}
+
+function capturePhoto(){
+  const vid=document.getElementById('cam-video');
+  const canvas=document.getElementById('cam-canvas');
+  canvas.width=vid.videoWidth;
+  canvas.height=vid.videoHeight;
+  canvas.getContext('2d').drawImage(vid,0,0);
+  closeCameraModal();
+  processScanDataUrl(canvas.toDataURL('image/jpeg',0.88));
+}
+
+function triggerGallery(){ document.getElementById('scan-input-gal').click(); }
+
 function closeScanPreview(){
-  const p=document.getElementById('scan-preview');
-  p.style.display='none';
+  document.getElementById('scan-preview').style.display='none';
   document.getElementById('scan-img').src='';
   document.getElementById('scan-ok').style.display='none';
 }
@@ -727,58 +780,58 @@ async function _compressImage(dataUrl, maxW=900, quality=0.82){
   });
 }
 
-async function handleScanFile(input){
-  const file=input.files?.[0];
-  if(!file)return;
-  input.value=''; // reset para permitir re-selección
-
+async function processScanDataUrl(original){
   const preview=document.getElementById('scan-preview');
   const imgEl=document.getElementById('scan-img');
   const overlay=document.getElementById('scan-overlay');
   const okBadge=document.getElementById('scan-ok');
 
-  const reader=new FileReader();
-  reader.onload=async e=>{
-    const original=e.target.result;
-    imgEl.src=original;
-    preview.style.display='block';
-    okBadge.style.display='none';
-    overlay.style.display='flex';
+  imgEl.src=original;
+  preview.style.display='block';
+  okBadge.style.display='none';
+  overlay.style.display='flex';
 
-    try{
-      const compressed=await _compressImage(original);
-      const [header,b64]=compressed.split(',');
-      const mediaType=header.match(/:(.*?);/)?.[1]||'image/jpeg';
+  try{
+    const compressed=await _compressImage(original);
+    const [header,b64]=compressed.split(',');
+    const mediaType=header.match(/:(.*?);/)?.[1]||'image/jpeg';
 
-      const result=await api('/api/analyze-photo',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({image:b64, media_type:mediaType, chat_id:chatId})
-      });
+    const result=await api('/api/analyze-photo',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({image:b64, media_type:mediaType, chat_id:chatId})
+    });
 
-      overlay.style.display='none';
+    overlay.style.display='none';
 
-      if(result?.ok && result.data){
-        const d=result.data;
-        if(d.nombre)      document.getElementById('f-nombre').value=d.nombre;
-        if(d.marca)       document.getElementById('f-marca').value=d.marca;
-        if(d.cantidad)    document.getElementById('f-cantidad').value=d.cantidad;
-        if(d.fecha_vence) document.getElementById('f-vence').value=d.fecha_vence;
-        if(d.comentario)  document.getElementById('f-comentario').value=d.comentario;
-        // Mostrar badge y auto-ocultar preview a los 2.5s
-        okBadge.style.display='block';
-        setTimeout(closeScanPreview, 2500);
-        toast('Revisá los campos y guardá');
-      } else {
-        setTimeout(closeScanPreview, 1500);
-        toast(result?.error||'No se pudo leer el producto');
-      }
-    } catch(err){
-      overlay.style.display='none';
+    if(result?.ok && result.data){
+      const d=result.data;
+      if(d.nombre)      document.getElementById('f-nombre').value=d.nombre;
+      if(d.marca)       document.getElementById('f-marca').value=d.marca;
+      if(d.cantidad)    document.getElementById('f-cantidad').value=d.cantidad;
+      if(d.fecha_vence) document.getElementById('f-vence').value=d.fecha_vence;
+      if(d.comentario)  document.getElementById('f-comentario').value=d.comentario;
+      okBadge.style.display='block';
+      setTimeout(closeScanPreview, 2500);
+      toast('Revisá los campos y guardá');
+    } else {
       setTimeout(closeScanPreview, 1500);
-      toast('Error al analizar la imagen');
+      toast(result?.error||'No se pudo leer el producto');
     }
-  };
+  } catch(err){
+    overlay.style.display='none';
+    setTimeout(closeScanPreview, 1500);
+    toast('Error al analizar la imagen');
+  }
+}
+
+// Entrada desde archivo (galería o fallback cámara)
+async function handleScanFile(input){
+  const file=input.files?.[0];
+  if(!file)return;
+  input.value='';
+  const reader=new FileReader();
+  reader.onload=e=>processScanDataUrl(e.target.result);
   reader.readAsDataURL(file);
 }
 
